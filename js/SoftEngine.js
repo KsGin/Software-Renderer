@@ -7,17 +7,18 @@ var SoftEngine;
         }
         return Camera;
     })();
-    SoftEngine.Camera = Camera;    
+    SoftEngine.Camera = Camera;
     var Mesh = (function () {
-        function Mesh(name, verticesCount) {
+        function Mesh(name, verticesCount, facesCount) {
             this.name = name;
             this.Vertices = new Array(verticesCount);
+            this.Faces = new Array(facesCount);
             this.Rotation = BABYLON.Vector3.Zero();
             this.Position = BABYLON.Vector3.Zero();
         }
         return Mesh;
     })();
-    SoftEngine.Mesh = Mesh;    
+    SoftEngine.Mesh = Mesh;
     var Device = (function () {
         function Device(canvas) {
             this.workingCanvas = canvas;
@@ -47,32 +48,46 @@ var SoftEngine;
             return (new BABYLON.Vector2(x, y));
         };
         Device.prototype.drawPoint = function (point) {
-            if(point.x >= 0 && point.y >= 0 && point.x < this.workingWidth && point.y < this.workingHeight) {
-                this.putPixel(point.x, point.y, new BABYLON.Color4(1, 1, 0, 1));
+            if (point.x >= 0 && point.y >= 0 && point.x < this.workingWidth && point.y < this.workingHeight) {
+                this.putPixel(point.x, point.y, new BABYLON.Color4(1, 1, 1, 1));
             }
         };
         Device.prototype.render = function (camera, meshes) {
             var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
             var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(0.78, this.workingWidth / this.workingHeight, 0.01, 10.0);
-            for(var index = 0; index < meshes.length; index++) {
-                var cMesh = meshes[index];
-                var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z).multiply(BABYLON.Matrix.Translation(cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
+            meshes.forEach(mesh => {
+                var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(mesh.Rotation.y, mesh.Rotation.x, mesh.Rotation.z).multiply(BABYLON.Matrix.Translation(mesh.Position.x, mesh.Position.y, mesh.Position.z));
                 var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
-                for(var indexVertices = 0; indexVertices < cMesh.Vertices.length - 1; indexVertices++) {
-                    var point1 = this.project(cMesh.Vertices[indexVertices], transformMatrix);
-                    var point2 = this.project(cMesh.Vertices[indexVertices + 1], transformMatrix);
-                    this.drawLine(point1 , point2);
-                }
-            }
+                mesh.Faces.forEach(face => {
+                    var p1 = this.project(mesh.Vertices[face.A], transformMatrix);
+                    var p2 = this.project(mesh.Vertices[face.B], transformMatrix);
+                    var p3 = this.project(mesh.Vertices[face.C], transformMatrix);
+
+                    this.drawLine(p1, p2);
+                    this.drawLine(p2, p3);
+                    this.drawLine(p3, p1);
+                });
+            });
         };
-        Device.prototype.drawLine = function(point1 , point2){
-            if(point2.subtract(point1).length() < 2) return;
-            var mid = point1.add((point2.subtract(point1)).scale(0.5));
-            this.drawPoint(mid);
-            this.drawLine(point1 , mid);
-            this.drawLine(mid , point2);
+        Device.prototype.drawLine = function (point0, point1) {
+            var x0 = point0.x >> 0;
+            var y0 = point0.y >> 0;
+            var x1 = point1.x >> 0;
+            var y1 = point1.y >> 0;
+            var dx = Math.abs(x1 - x0);
+            var dy = Math.abs(y1 - y0);
+            var sx = (x0 < x1) ? 1 : -1;
+            var sy = (y0 < y1) ? 1 : -1;
+            var err = dx - dy;
+            while (true) {
+                this.drawPoint(new BABYLON.Vector2(x0, y0));
+                if ((x0 == x1) && (y0 == y1)) break;
+                var e2 = 2 * err;
+                if (e2 > -dy) { err -= dy; x0 += sx; }
+                if (e2 < dx) { err += dx; y0 += sy; }
+            }
         };
         return Device;
     })();
-    SoftEngine.Device = Device;    
+    SoftEngine.Device = Device;
 })(SoftEngine || (SoftEngine = {}));
