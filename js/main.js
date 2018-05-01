@@ -15,9 +15,9 @@ var mera;
 document.addEventListener("DOMContentLoaded", init, false);
 function init() {
     canvas = document.getElementById("frontBuffer");
-    mera = new SoftEngine.Camera();
-    device = new SoftEngine.Device(canvas);
-    mesh = new SoftEngine.Mesh("Cube", 8, 12);
+    mera = new SoftwareRenderer.Camera();
+    device = new SoftwareRenderer.Device(canvas);
+    mesh = new SoftwareRenderer.Mesh("Cube", 8, 12);
     meshes.push(mesh);
 
     mesh.Vertices[0] = new BABYLON.Vector3(-1, 1, 1);

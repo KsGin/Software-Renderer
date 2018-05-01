@@ -1,5 +1,5 @@
-var SoftEngine;
-(function (SoftEngine) {
+var SoftwareRenderer;
+(function (SoftwareRenderer) {
     var Camera = (function () {
         function Camera() {
             this.Position = BABYLON.Vector3.Zero();
@@ -7,7 +7,7 @@ var SoftEngine;
         }
         return Camera;
     })();
-    SoftEngine.Camera = Camera;
+    SoftwareRenderer.Camera = Camera;
     var Mesh = (function () {
         function Mesh(name, verticesCount, facesCount) {
             this.name = name;
@@ -18,7 +18,7 @@ var SoftEngine;
         }
         return Mesh;
     })();
-    SoftEngine.Mesh = Mesh;
+    SoftwareRenderer.Mesh = Mesh;
     var Device = (function () {
         function Device(canvas) {
             this.workingCanvas = canvas;
@@ -89,5 +89,5 @@ var SoftEngine;
         };
         return Device;
     })();
-    SoftEngine.Device = Device;
-})(SoftEngine || (SoftEngine = {}));
+    SoftwareRenderer.Device = Device;
+})(SoftwareRenderer || (SoftwareRenderer = {}));
