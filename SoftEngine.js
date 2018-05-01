@@ -42,7 +42,7 @@ var SoftEngine;
         };
         Device.prototype.project = function (coord, transMat) {
             var point = BABYLON.Vector3.TransformCoordinates(coord, transMat);
-            var x = point.x * this.workingWidth + this.workingWidth / 2.0 >> 0;
+            var x = -point.x * this.workingWidth + this.workingWidth / 2.0 >> 0;
             var y = -point.y * this.workingHeight + this.workingHeight / 2.0 >> 0;
             return (new BABYLON.Vector2(x, y));
         };
@@ -53,16 +53,24 @@ var SoftEngine;
         };
         Device.prototype.render = function (camera, meshes) {
             var viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
-            var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(0.78, this.workingWidth / this.workingHeight, 0.01, 1.0);
+            var projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(0.78, this.workingWidth / this.workingHeight, 0.01, 10.0);
             for(var index = 0; index < meshes.length; index++) {
                 var cMesh = meshes[index];
                 var worldMatrix = BABYLON.Matrix.RotationYawPitchRoll(cMesh.Rotation.y, cMesh.Rotation.x, cMesh.Rotation.z).multiply(BABYLON.Matrix.Translation(cMesh.Position.x, cMesh.Position.y, cMesh.Position.z));
                 var transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
-                for(var indexVertices = 0; indexVertices < cMesh.Vertices.length; indexVertices++) {
-                    var projectedPoint = this.project(cMesh.Vertices[indexVertices], transformMatrix);
-                    this.drawPoint(projectedPoint);
+                for(var indexVertices = 0; indexVertices < cMesh.Vertices.length - 1; indexVertices++) {
+                    var point1 = this.project(cMesh.Vertices[indexVertices], transformMatrix);
+                    var point2 = this.project(cMesh.Vertices[indexVertices + 1], transformMatrix);
+                    this.drawLine(point1 , point2);
                 }
             }
+        };
+        Device.prototype.drawLine = function(point1 , point2){
+            if(point2.subtract(point1).length() < 2) return;
+            var mid = point1.add((point2.subtract(point1)).scale(0.5));
+            this.drawPoint(mid);
+            this.drawLine(point1 , mid);
+            this.drawLine(mid , point2);
         };
         return Device;
     })();
