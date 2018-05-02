@@ -59,7 +59,7 @@ function loadModel() {
 function Render() {
     device.clearColorAndDepth();
 
-    //worldMatrix = worldMatrix.multiply(BABYLON.Matrix.RotationYawPitchRoll(0.01, 0.01 , 0));
+    worldMatrix = worldMatrix.multiply(BABYLON.Matrix.RotationYawPitchRoll(0.01, 0.01 , 0));
 
     device.render(camera, meshes, worldMatrix, viewMatrix, projectionMatrix);
 

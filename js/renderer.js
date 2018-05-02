@@ -39,12 +39,12 @@ let SoftwareRenderer;
             this.backbufferdata = this.backbuffer.data;
             let index = ((x >> 0) + (y >> 0) * this.workingWidth) * 4;
 
-            // 深度测试
-            if (this.depthBuffer[index / 4] < z) {
-                return;
-            }
-
-            this.depthBuffer[index / 4] = z;
+            // // 深度测试
+            // if (this.depthBuffer[index / 4] < z) {
+            //     return;
+            // }
+            //
+            // this.depthBuffer[index / 4] = z;
 
             this.backbufferdata[index] = color.r * 255;
             this.backbufferdata[index + 1] = color.g * 255;
