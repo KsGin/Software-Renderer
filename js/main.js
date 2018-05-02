@@ -11,7 +11,10 @@ let canvas;
 let device;
 let mesh;
 let meshes;
-let mera;
+let camera;
+let viewMatrix;
+let projectionMatrix;
+let worldMatrix;
 
 function loadModel() {
 
@@ -22,15 +25,14 @@ function loadModel() {
     // init data
     meshes = [];
     canvas = document.getElementById("frontBuffer");
-    mera = new SoftwareRenderer.Camera();
+    camera = new SoftwareRenderer.Camera();
     device = new SoftwareRenderer.Device(canvas);
 
     reader.onload = function (res) {
         let text = res.target.result;
         let texArray = text.split(/\s+|\r+\n+/);
-        console.log(texArray);
 
-        mesh = new SoftwareRenderer.Mesh("Cube", texArray[0], texArray[0]);
+        mesh = new SoftwareRenderer.Mesh("Model", texArray[0], texArray[0]);
         meshes.push(mesh);
 
         for (let i = 0 ; i < (texArray.length-1) / 24 ; ++i){
@@ -40,18 +42,27 @@ function loadModel() {
             mesh.Faces[i * 3] = {A:i * 3 , B:i*3+1 , C:i*3+2};
         }
 
-        mera.Position = new BABYLON.Vector3(0, 0, 10);
-        mera.Target = new BABYLON.Vector3(0, 0, 0);
-        requestAnimationFrame(drawingLoop);
+        camera.Position = new BABYLON.Vector3(0, 3, 10);
+        camera.Target = new BABYLON.Vector3(0, 0, 0);
+
+        worldMatrix = BABYLON.Matrix.Translation(mesh.Position.x, mesh.Position.y, mesh.Position.z);
+        viewMatrix = BABYLON.Matrix.LookAtLH(camera.Position, camera.Target, BABYLON.Vector3.Up());
+        projectionMatrix = BABYLON.Matrix.PerspectiveFovLH(0.78, canvas.width / canvas.height, 0.01, 10.0);
+
+        requestAnimationFrame(Render);
     };
+
     reader.readAsText(modelFile);
 }
 
-function drawingLoop() {
+function Render() {
     device.clear();
-    mesh.Rotation.x += 0.01;
-    mesh.Rotation.y += 0.01;
-    device.render(mera, meshes);
+
+    //worldMatrix = worldMatrix.multiply(BABYLON.Matrix.RotationYawPitchRoll(0.01, 0.01, 0));
+
+    device.render(camera, meshes , worldMatrix , viewMatrix , projectionMatrix);
+
     device.present();
-    requestAnimationFrame(drawingLoop);
+
+    requestAnimationFrame(Render);
 }
