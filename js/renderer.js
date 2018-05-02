@@ -27,10 +27,10 @@ let SoftwareRenderer;
             this.depthBuffer = new Array(this.workingWidth * this.workingHeight);
         }
 
-        Device.prototype.clear = function () {
-            this.workingContext.clearRect(0, 0, this.workingWidth, this.workingHeight);
+        Device.prototype.clearColorAndDepth = function () {
+            this.workingContext.clearRect(0 , 0 , this.workingWidth, this.workingHeight);
             this.backbuffer = this.workingContext.getImageData(0, 0, this.workingWidth, this.workingHeight);
-            this.depthBuffer.fill(100000, 0, this.workingWidth * this.workingHeight);
+            this.depthBuffer.fill(1000, 0, this.workingWidth * this.workingHeight);
         };
         Device.prototype.present = function () {
             this.workingContext.putImageData(this.backbuffer, 0, 0);
@@ -65,11 +65,14 @@ let SoftwareRenderer;
         Device.prototype.render = function (camera, meshes, worldMatrix, viewMatrix, projectionMatrix) {
             let transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
             meshes.forEach(mesh => {
+                let idx = 0;
                 mesh.Faces.forEach(face => {
                     let p1 = this.project(mesh.Vertices[face.A], transformMatrix);
                     let p2 = this.project(mesh.Vertices[face.B], transformMatrix);
                     let p3 = this.project(mesh.Vertices[face.C], transformMatrix);
-                    this.drawTriangle(p1, p2, p3, new BABYLON.Color4(1, 1, 0, 1));
+                    let color = 0.25 + ((idx % mesh.Faces.length) / mesh.Faces.length) * 0.75;
+                    this.drawTriangle(p1, p2, p3, new BABYLON.Color4(color, color, color , 1));
+                    idx++;
                 });
             });
         };
@@ -121,6 +124,13 @@ let SoftwareRenderer;
             let sx = this.interpolate(pa.x, pb.x, gradient1) >> 0;
             let ex = this.interpolate(pc.x, pd.x, gradient2) >> 0;
 
+            // 限定 sx < ex
+            if (sx > ex) {
+                let tmp = sx;
+                sx = ex;
+                ex = tmp;
+            }
+
             // 计算 开始Z值 和 结束Z值
             let z1 = this.interpolate(pa.z, pb.z, gradient1);
             let z2 = this.interpolate(pc.z, pd.z, gradient2);
@@ -166,6 +176,7 @@ let SoftwareRenderer;
             } else {
                 dP1P3 = 0;
             }
+
             if (dP1P2 > dP1P3) {
                 for (y = p1.y >> 0; y <= p3.y >> 0; y++) {
                     if (y < p2.y) {
