@@ -10,43 +10,43 @@ window.requestAnimationFrame = (function () {
 let canvas;
 let device;
 let mesh;
-let meshes = [];
+let meshes;
 let mera;
-document.addEventListener("DOMContentLoaded", init, false);
-function init() {
+
+function loadModel() {
+
+    // get file
+    let modelFile = document.getElementById("modelFile").files[0];
+    let reader = new FileReader();
+
+    // init data
+    meshes = [];
     canvas = document.getElementById("frontBuffer");
     mera = new SoftwareRenderer.Camera();
     device = new SoftwareRenderer.Device(canvas);
-    mesh = new SoftwareRenderer.Mesh("Cube", 8, 12);
-    meshes.push(mesh);
 
-    mesh.Vertices[0] = new BABYLON.Vector3(-1, 1, 1);
-    mesh.Vertices[1] = new BABYLON.Vector3(1, 1, 1);
-    mesh.Vertices[2] = new BABYLON.Vector3(-1, -1, 1);
-    mesh.Vertices[3] = new BABYLON.Vector3(1, -1, 1);
-    mesh.Vertices[4] = new BABYLON.Vector3(-1, 1, -1);
-    mesh.Vertices[5] = new BABYLON.Vector3(1, 1, -1);
-    mesh.Vertices[6] = new BABYLON.Vector3(1, -1, -1);
-    mesh.Vertices[7] = new BABYLON.Vector3(-1, -1, -1);
-    
-    mesh.Faces[0] = { A:0, B:1, C:2 };
-    mesh.Faces[1] = { A:1, B:2, C:3 };
-    mesh.Faces[2] = { A:1, B:3, C:6 };
-    mesh.Faces[3] = { A:1, B:5, C:6 };
-    mesh.Faces[4] = { A:0, B:1, C:4 };
-    mesh.Faces[5] = { A:1, B:4, C:5 };
-    
-    mesh.Faces[6] = { A:2, B:3, C:7 };
-    mesh.Faces[7] = { A:3, B:6, C:7 };
-    mesh.Faces[8] = { A:0, B:2, C:7 };
-    mesh.Faces[9] = { A:0, B:4, C:7 };
-    mesh.Faces[10] = { A:4, B:5, C:6 };
-    mesh.Faces[11] = { A:4, B:6, C:7 };
+    reader.onload = function (res) {
+        let text = res.target.result;
+        let texArray = text.split(/\s+|\r+\n+/);
+        console.log(texArray);
 
-    mera.Position = new BABYLON.Vector3(0, 0, 10);
-    mera.Target = new BABYLON.Vector3(0, 0, 0);
-    requestAnimationFrame(drawingLoop);
+        mesh = new SoftwareRenderer.Mesh("Cube", texArray[0], texArray[0]);
+        meshes.push(mesh);
+
+        for (let i = 0 ; i < (texArray.length-1) / 24 ; ++i){
+            mesh.Vertices[i * 3] = new BABYLON.Vector3(texArray[i * 24 + 1] , texArray[i * 24 + 1 + 1] , texArray[i * 24 + 2 + 1]);
+            mesh.Vertices[i * 3 + 1] = new BABYLON.Vector3(texArray[i * 24 + 8 + 1] , texArray[i * 24 + 8 + 1 + 1] , texArray[i * 24 + 8 + 2 + 1]);
+            mesh.Vertices[i * 3 + 2] = new BABYLON.Vector3(texArray[i * 24 + 16 + 1] , texArray[i * 24 + 16 + 1 + 1] , texArray[i * 24 + 16 + 2 + 1]);
+            mesh.Faces[i * 3] = {A:i * 3 , B:i*3+1 , C:i*3+2};
+        }
+
+        mera.Position = new BABYLON.Vector3(0, 0, 10);
+        mera.Target = new BABYLON.Vector3(0, 0, 0);
+        requestAnimationFrame(drawingLoop);
+    };
+    reader.readAsText(modelFile);
 }
+
 function drawingLoop() {
     device.clear();
     mesh.Rotation.x += 0.01;
