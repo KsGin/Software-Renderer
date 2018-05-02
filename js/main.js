@@ -7,11 +7,11 @@ window.requestAnimationFrame = (function () {
          };
      })();
 
-var canvas;
-var device;
-var mesh;
-var meshes = [];
-var mera;
+let canvas;
+let device;
+let mesh;
+let meshes = [];
+let mera;
 document.addEventListener("DOMContentLoaded", init, false);
 function init() {
     canvas = document.getElementById("frontBuffer");

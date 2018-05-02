@@ -1,6 +1,6 @@
-var BABYLON;
+let BABYLON;
 (function (BABYLON) {
-    var Color4 = (function () {
+    let Color4 = (function () {
         function Color4(initialR, initialG, initialB, initialA) {
             this.r = initialR;
             this.g = initialG;
@@ -12,8 +12,8 @@ var BABYLON;
         };
         return Color4;
     })();
-    BABYLON.Color4 = Color4;    
-    var Vector2 = (function () {
+    BABYLON.Color4 = Color4;
+    let Vector2 = (function () {
         function Vector2(initialX, initialY) {
             this.x = initialX;
             this.y = initialY;
@@ -43,11 +43,11 @@ var BABYLON;
             return (this.x * this.x + this.y * this.y);
         };
         Vector2.prototype.normalize = function () {
-            var len = this.length();
+            let len = this.length();
             if(len === 0) {
                 return;
             }
-            var num = 1.0 / len;
+            let num = 1.0 / len;
             this.x *= num;
             this.y *= num;
         };
@@ -58,37 +58,37 @@ var BABYLON;
             return new Vector2(source.x, source.y);
         };
         Vector2.Normalize = function Normalize(vector) {
-            var newVector = Vector2.Copy(vector);
+            let newVector = Vector2.Copy(vector);
             newVector.normalize();
             return newVector;
         };
         Vector2.Minimize = function Minimize(left, right) {
-            var x = (left.x < right.x) ? left.x : right.x;
-            var y = (left.y < right.y) ? left.y : right.y;
+            let x = (left.x < right.x) ? left.x : right.x;
+            let y = (left.y < right.y) ? left.y : right.y;
             return new Vector2(x, y);
         };
         Vector2.Maximize = function Maximize(left, right) {
-            var x = (left.x > right.x) ? left.x : right.x;
-            var y = (left.y > right.y) ? left.y : right.y;
+            let x = (left.x > right.x) ? left.x : right.x;
+            let y = (left.y > right.y) ? left.y : right.y;
             return new Vector2(x, y);
         };
         Vector2.Transform = function Transform(vector, transformation) {
-            var x = (vector.x * transformation.m[0]) + (vector.y * transformation.m[4]);
-            var y = (vector.x * transformation.m[1]) + (vector.y * transformation.m[5]);
+            let x = (vector.x * transformation.m[0]) + (vector.y * transformation.m[4]);
+            let y = (vector.x * transformation.m[1]) + (vector.y * transformation.m[5]);
             return new Vector2(x, y);
         };
         Vector2.Distance = function Distance(value1, value2) {
             return Math.sqrt(Vector2.DistanceSquared(value1, value2));
         };
         Vector2.DistanceSquared = function DistanceSquared(value1, value2) {
-            var x = value1.x - value2.x;
-            var y = value1.y - value2.y;
+            let x = value1.x - value2.x;
+            let y = value1.y - value2.y;
             return (x * x) + (y * y);
         };
         return Vector2;
     })();
-    BABYLON.Vector2 = Vector2;    
-    var Vector3 = (function () {
+    BABYLON.Vector2 = Vector2;
+    let Vector3 = (function () {
         function Vector3(initialX, initialY, initialZ) {
             this.x = initialX;
             this.y = initialY;
@@ -125,11 +125,11 @@ var BABYLON;
             return (this.x * this.x + this.y * this.y + this.z * this.z);
         };
         Vector3.prototype.normalize = function () {
-            var len = this.length();
+            let len = this.length();
             if(len === 0) {
                 return;
             }
-            var num = 1.0 / len;
+            let num = 1.0 / len;
             this.x *= num;
             this.y *= num;
             this.z *= num;
@@ -150,29 +150,29 @@ var BABYLON;
             return new Vector3(source.x, source.y, source.z);
         };
         Vector3.TransformCoordinates = function TransformCoordinates(vector, transformation) {
-            var x = (vector.x * transformation.m[0]) + (vector.y * transformation.m[4]) + (vector.z * transformation.m[8]) + transformation.m[12];
-            var y = (vector.x * transformation.m[1]) + (vector.y * transformation.m[5]) + (vector.z * transformation.m[9]) + transformation.m[13];
-            var z = (vector.x * transformation.m[2]) + (vector.y * transformation.m[6]) + (vector.z * transformation.m[10]) + transformation.m[14];
-            var w = (vector.x * transformation.m[3]) + (vector.y * transformation.m[7]) + (vector.z * transformation.m[11]) + transformation.m[15];
+            let x = (vector.x * transformation.m[0]) + (vector.y * transformation.m[4]) + (vector.z * transformation.m[8]) + transformation.m[12];
+            let y = (vector.x * transformation.m[1]) + (vector.y * transformation.m[5]) + (vector.z * transformation.m[9]) + transformation.m[13];
+            let z = (vector.x * transformation.m[2]) + (vector.y * transformation.m[6]) + (vector.z * transformation.m[10]) + transformation.m[14];
+            let w = (vector.x * transformation.m[3]) + (vector.y * transformation.m[7]) + (vector.z * transformation.m[11]) + transformation.m[15];
             return new Vector3(x / w, y / w, z / w);
         };
         Vector3.TransformNormal = function TransformNormal(vector, transformation) {
-            var x = (vector.x * transformation.m[0]) + (vector.y * transformation.m[4]) + (vector.z * transformation.m[8]);
-            var y = (vector.x * transformation.m[1]) + (vector.y * transformation.m[5]) + (vector.z * transformation.m[9]);
-            var z = (vector.x * transformation.m[2]) + (vector.y * transformation.m[6]) + (vector.z * transformation.m[10]);
+            let x = (vector.x * transformation.m[0]) + (vector.y * transformation.m[4]) + (vector.z * transformation.m[8]);
+            let y = (vector.x * transformation.m[1]) + (vector.y * transformation.m[5]) + (vector.z * transformation.m[9]);
+            let z = (vector.x * transformation.m[2]) + (vector.y * transformation.m[6]) + (vector.z * transformation.m[10]);
             return new Vector3(x, y, z);
         };
         Vector3.Dot = function Dot(left, right) {
             return (left.x * right.x + left.y * right.y + left.z * right.z);
         };
         Vector3.Cross = function Cross(left, right) {
-            var x = left.y * right.z - left.z * right.y;
-            var y = left.z * right.x - left.x * right.z;
-            var z = left.x * right.y - left.y * right.x;
+            let x = left.y * right.z - left.z * right.y;
+            let y = left.z * right.x - left.x * right.z;
+            let z = left.x * right.y - left.y * right.x;
             return new Vector3(x, y, z);
         };
         Vector3.Normalize = function Normalize(vector) {
-            var newVector = Vector3.Copy(vector);
+            let newVector = Vector3.Copy(vector);
             newVector.normalize();
             return newVector;
         };
@@ -180,9 +180,9 @@ var BABYLON;
             return Math.sqrt(Vector3.DistanceSquared(value1, value2));
         };
         Vector3.DistanceSquared = function DistanceSquared(value1, value2) {
-            var x = value1.x - value2.x;
-            var y = value1.y - value2.y;
-            var z = value1.z - value2.z;
+            let x = value1.x - value2.x;
+            let y = value1.y - value2.y;
+            let z = value1.z - value2.z;
             return (x * x) + (y * y) + (z * z);
         };
         return Vector3;
@@ -202,57 +202,57 @@ var BABYLON;
             return true;
         };
         Matrix.prototype.determinant = function () {
-            var temp1 = (this.m[10] * this.m[15]) - (this.m[11] * this.m[14]);
-            var temp2 = (this.m[9] * this.m[15]) - (this.m[11] * this.m[13]);
-            var temp3 = (this.m[9] * this.m[14]) - (this.m[10] * this.m[13]);
-            var temp4 = (this.m[8] * this.m[15]) - (this.m[11] * this.m[12]);
-            var temp5 = (this.m[8] * this.m[14]) - (this.m[10] * this.m[12]);
-            var temp6 = (this.m[8] * this.m[13]) - (this.m[9] * this.m[12]);
+            let temp1 = (this.m[10] * this.m[15]) - (this.m[11] * this.m[14]);
+            let temp2 = (this.m[9] * this.m[15]) - (this.m[11] * this.m[13]);
+            let temp3 = (this.m[9] * this.m[14]) - (this.m[10] * this.m[13]);
+            let temp4 = (this.m[8] * this.m[15]) - (this.m[11] * this.m[12]);
+            let temp5 = (this.m[8] * this.m[14]) - (this.m[10] * this.m[12]);
+            let temp6 = (this.m[8] * this.m[13]) - (this.m[9] * this.m[12]);
             return ((((this.m[0] * (((this.m[5] * temp1) - (this.m[6] * temp2)) + (this.m[7] * temp3))) - (this.m[1] * (((this.m[4] * temp1) - (this.m[6] * temp4)) + (this.m[7] * temp5)))) + (this.m[2] * (((this.m[4] * temp2) - (this.m[5] * temp4)) + (this.m[7] * temp6)))) - (this.m[3] * (((this.m[4] * temp3) - (this.m[5] * temp5)) + (this.m[6] * temp6))));
         };
         Matrix.prototype.toArray = function () {
             return this.m;
         };
         Matrix.prototype.invert = function () {
-            var l1 = this.m[0];
-            var l2 = this.m[1];
-            var l3 = this.m[2];
-            var l4 = this.m[3];
-            var l5 = this.m[4];
-            var l6 = this.m[5];
-            var l7 = this.m[6];
-            var l8 = this.m[7];
-            var l9 = this.m[8];
-            var l10 = this.m[9];
-            var l11 = this.m[10];
-            var l12 = this.m[11];
-            var l13 = this.m[12];
-            var l14 = this.m[13];
-            var l15 = this.m[14];
-            var l16 = this.m[15];
-            var l17 = (l11 * l16) - (l12 * l15);
-            var l18 = (l10 * l16) - (l12 * l14);
-            var l19 = (l10 * l15) - (l11 * l14);
-            var l20 = (l9 * l16) - (l12 * l13);
-            var l21 = (l9 * l15) - (l11 * l13);
-            var l22 = (l9 * l14) - (l10 * l13);
-            var l23 = ((l6 * l17) - (l7 * l18)) + (l8 * l19);
-            var l24 = -(((l5 * l17) - (l7 * l20)) + (l8 * l21));
-            var l25 = ((l5 * l18) - (l6 * l20)) + (l8 * l22);
-            var l26 = -(((l5 * l19) - (l6 * l21)) + (l7 * l22));
-            var l27 = 1.0 / ((((l1 * l23) + (l2 * l24)) + (l3 * l25)) + (l4 * l26));
-            var l28 = (l7 * l16) - (l8 * l15);
-            var l29 = (l6 * l16) - (l8 * l14);
-            var l30 = (l6 * l15) - (l7 * l14);
-            var l31 = (l5 * l16) - (l8 * l13);
-            var l32 = (l5 * l15) - (l7 * l13);
-            var l33 = (l5 * l14) - (l6 * l13);
-            var l34 = (l7 * l12) - (l8 * l11);
-            var l35 = (l6 * l12) - (l8 * l10);
-            var l36 = (l6 * l11) - (l7 * l10);
-            var l37 = (l5 * l12) - (l8 * l9);
-            var l38 = (l5 * l11) - (l7 * l9);
-            var l39 = (l5 * l10) - (l6 * l9);
+            let l1 = this.m[0];
+            let l2 = this.m[1];
+            let l3 = this.m[2];
+            let l4 = this.m[3];
+            let l5 = this.m[4];
+            let l6 = this.m[5];
+            let l7 = this.m[6];
+            let l8 = this.m[7];
+            let l9 = this.m[8];
+            let l10 = this.m[9];
+            let l11 = this.m[10];
+            let l12 = this.m[11];
+            let l13 = this.m[12];
+            let l14 = this.m[13];
+            let l15 = this.m[14];
+            let l16 = this.m[15];
+            let l17 = (l11 * l16) - (l12 * l15);
+            let l18 = (l10 * l16) - (l12 * l14);
+            let l19 = (l10 * l15) - (l11 * l14);
+            let l20 = (l9 * l16) - (l12 * l13);
+            let l21 = (l9 * l15) - (l11 * l13);
+            let l22 = (l9 * l14) - (l10 * l13);
+            let l23 = ((l6 * l17) - (l7 * l18)) + (l8 * l19);
+            let l24 = -(((l5 * l17) - (l7 * l20)) + (l8 * l21));
+            let l25 = ((l5 * l18) - (l6 * l20)) + (l8 * l22);
+            let l26 = -(((l5 * l19) - (l6 * l21)) + (l7 * l22));
+            let l27 = 1.0 / ((((l1 * l23) + (l2 * l24)) + (l3 * l25)) + (l4 * l26));
+            let l28 = (l7 * l16) - (l8 * l15);
+            let l29 = (l6 * l16) - (l8 * l14);
+            let l30 = (l6 * l15) - (l7 * l14);
+            let l31 = (l5 * l16) - (l8 * l13);
+            let l32 = (l5 * l15) - (l7 * l13);
+            let l33 = (l5 * l14) - (l6 * l13);
+            let l34 = (l7 * l12) - (l8 * l11);
+            let l35 = (l6 * l12) - (l8 * l10);
+            let l36 = (l6 * l11) - (l7 * l10);
+            let l37 = (l5 * l12) - (l8 * l9);
+            let l38 = (l5 * l11) - (l7 * l9);
+            let l39 = (l5 * l10) - (l6 * l9);
             this.m[0] = l23 * l27;
             this.m[4] = l24 * l27;
             this.m[8] = l25 * l27;
@@ -271,7 +271,7 @@ var BABYLON;
             this.m[15] = (((l1 * l36) - (l2 * l38)) + (l3 * l39)) * l27;
         };
         Matrix.prototype.multiply = function (other) {
-            var result = new Matrix();
+            let result = new Matrix();
             result.m[0] = this.m[0] * other.m[0] + this.m[1] * other.m[4] + this.m[2] * other.m[8] + this.m[3] * other.m[12];
             result.m[1] = this.m[0] * other.m[1] + this.m[1] * other.m[5] + this.m[2] * other.m[9] + this.m[3] * other.m[13];
             result.m[2] = this.m[0] * other.m[2] + this.m[1] * other.m[6] + this.m[2] * other.m[10] + this.m[3] * other.m[14];
@@ -294,7 +294,7 @@ var BABYLON;
             return (this.m[0] === value.m[0] && this.m[1] === value.m[1] && this.m[2] === value.m[2] && this.m[3] === value.m[3] && this.m[4] === value.m[4] && this.m[5] === value.m[5] && this.m[6] === value.m[6] && this.m[7] === value.m[7] && this.m[8] === value.m[8] && this.m[9] === value.m[9] && this.m[10] === value.m[10] && this.m[11] === value.m[11] && this.m[12] === value.m[12] && this.m[13] === value.m[13] && this.m[14] === value.m[14] && this.m[15] === value.m[15]);
         };
         Matrix.FromValues = function FromValues(initialM11, initialM12, initialM13, initialM14, initialM21, initialM22, initialM23, initialM24, initialM31, initialM32, initialM33, initialM34, initialM41, initialM42, initialM43, initialM44) {
-            var result = new Matrix();
+            let result = new Matrix();
             result.m[0] = initialM11;
             result.m[1] = initialM12;
             result.m[2] = initialM13;
@@ -323,9 +323,9 @@ var BABYLON;
             return Matrix.FromValues(source.m[0], source.m[1], source.m[2], source.m[3], source.m[4], source.m[5], source.m[6], source.m[7], source.m[8], source.m[9], source.m[10], source.m[11], source.m[12], source.m[13], source.m[14], source.m[15]);
         };
         Matrix.RotationX = function RotationX(angle) {
-            var result = Matrix.Zero();
-            var s = Math.sin(angle);
-            var c = Math.cos(angle);
+            let result = Matrix.Zero();
+            let s = Math.sin(angle);
+            let c = Math.cos(angle);
             result.m[0] = 1.0;
             result.m[15] = 1.0;
             result.m[5] = c;
@@ -335,9 +335,9 @@ var BABYLON;
             return result;
         };
         Matrix.RotationY = function RotationY(angle) {
-            var result = Matrix.Zero();
-            var s = Math.sin(angle);
-            var c = Math.cos(angle);
+            let result = Matrix.Zero();
+            let s = Math.sin(angle);
+            let c = Math.cos(angle);
             result.m[5] = 1.0;
             result.m[15] = 1.0;
             result.m[0] = c;
@@ -347,9 +347,9 @@ var BABYLON;
             return result;
         };
         Matrix.RotationZ = function RotationZ(angle) {
-            var result = Matrix.Zero();
-            var s = Math.sin(angle);
-            var c = Math.cos(angle);
+            let result = Matrix.Zero();
+            let s = Math.sin(angle);
+            let c = Math.cos(angle);
             result.m[10] = 1.0;
             result.m[15] = 1.0;
             result.m[0] = c;
@@ -359,11 +359,11 @@ var BABYLON;
             return result;
         };
         Matrix.RotationAxis = function RotationAxis(axis, angle) {
-            var s = Math.sin(-angle);
-            var c = Math.cos(-angle);
-            var c1 = 1 - c;
+            let s = Math.sin(-angle);
+            let c = Math.cos(-angle);
+            let c1 = 1 - c;
             axis.normalize();
-            var result = Matrix.Zero();
+            let result = Matrix.Zero();
             result.m[0] = (axis.x * axis.x) * c1 + c;
             result.m[1] = (axis.x * axis.y) * c1 - (axis.z * s);
             result.m[2] = (axis.x * axis.z) * c1 + (axis.y * s);
@@ -383,7 +383,7 @@ var BABYLON;
             return Matrix.RotationZ(roll).multiply(Matrix.RotationX(pitch)).multiply(Matrix.RotationY(yaw));
         };
         Matrix.Scaling = function Scaling(x, y, z) {
-            var result = Matrix.Zero();
+            let result = Matrix.Zero();
             result.m[0] = x;
             result.m[5] = y;
             result.m[10] = z;
@@ -391,26 +391,26 @@ var BABYLON;
             return result;
         };
         Matrix.Translation = function Translation(x, y, z) {
-            var result = Matrix.Identity();
+            let result = Matrix.Identity();
             result.m[12] = x;
             result.m[13] = y;
             result.m[14] = z;
             return result;
         };
         Matrix.LookAtLH = function LookAtLH(eye, target, up) {
-            var zAxis = target.subtract(eye);
+            let zAxis = target.subtract(eye);
             zAxis.normalize();
-            var xAxis = Vector3.Cross(up, zAxis);
+            let xAxis = Vector3.Cross(up, zAxis);
             xAxis.normalize();
-            var yAxis = Vector3.Cross(zAxis, xAxis);
+            let yAxis = Vector3.Cross(zAxis, xAxis);
             yAxis.normalize();
-            var ex = -Vector3.Dot(xAxis, eye);
-            var ey = -Vector3.Dot(yAxis, eye);
-            var ez = -Vector3.Dot(zAxis, eye);
+            let ex = -Vector3.Dot(xAxis, eye);
+            let ey = -Vector3.Dot(yAxis, eye);
+            let ez = -Vector3.Dot(zAxis, eye);
             return Matrix.FromValues(xAxis.x, yAxis.x, zAxis.x, 0, xAxis.y, yAxis.y, zAxis.y, 0, xAxis.z, yAxis.z, zAxis.z, 0, ex, ey, ez, 1);
         };
         Matrix.PerspectiveLH = function PerspectiveLH(width, height, znear, zfar) {
-            var matrix = Matrix.Zero();
+            let matrix = Matrix.Zero();
             matrix.m[0] = (2.0 * znear) / width;
             matrix.m[1] = matrix.m[2] = matrix.m[3] = 0.0;
             matrix.m[5] = (2.0 * znear) / height;
@@ -423,8 +423,8 @@ var BABYLON;
             return matrix;
         };
         Matrix.PerspectiveFovLH = function PerspectiveFovLH(fov, aspect, znear, zfar) {
-            var matrix = Matrix.Zero();
-            var tan = 1.0 / (Math.tan(fov * 0.5));
+            let matrix = Matrix.Zero();
+            let tan = 1.0 / (Math.tan(fov * 0.5));
             matrix.m[0] = tan / aspect;
             matrix.m[1] = matrix.m[2] = matrix.m[3] = 0.0;
             matrix.m[5] = tan;
@@ -437,7 +437,7 @@ var BABYLON;
             return matrix;
         };
         Matrix.Transpose = function Transpose(matrix) {
-            var result = new Matrix();
+            let result = new Matrix();
             result.m[0] = matrix.m[0];
             result.m[1] = matrix.m[4];
             result.m[2] = matrix.m[8];
