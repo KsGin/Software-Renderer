@@ -15,8 +15,15 @@ let camera;
 let viewMatrix;
 let projectionMatrix;
 let worldMatrix;
+let fps;
+let startTime;
+let endTime;
 
 function loadModel() {
+
+    fps = 60;
+    startTime = 0;
+    endTime = 0;
 
     // get file
     let modelFile = document.getElementById("modelFile").files[0];
@@ -25,6 +32,7 @@ function loadModel() {
     // init data
     meshes = [];
     canvas = document.getElementById("frontBuffer");
+
     camera = new SoftwareRenderer.Camera();
     device = new SoftwareRenderer.Device(canvas);
 
@@ -57,13 +65,30 @@ function loadModel() {
 }
 
 function Render() {
+    startTime = new Date().getTime();
     device.clearColorAndDepth();
-
     worldMatrix = worldMatrix.multiply(BABYLON.Matrix.RotationYawPitchRoll(0.01, 0.01 , 0));
-
     device.render(camera, meshes, worldMatrix, viewMatrix, projectionMatrix);
-
     device.present();
+    endTime = new Date().getTime();
+
+    fps =  (1000 / (endTime - startTime)) >> 0;
+
+    displayFPS();
 
     requestAnimationFrame(Render);
+}
+
+
+function displayFPS() {
+
+    document.getElementById("fpsDisplay").innerText = fps;
+}
+
+function UpdateWireFrameMode() {
+    device.isWireFrame = !device.isWireFrame;
+}
+
+function UpdateDepthTestMode(){
+    device.isDepthTest = !device.isDepthTest;
 }

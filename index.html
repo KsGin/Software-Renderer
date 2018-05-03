@@ -3,21 +3,56 @@
 <head>
     <title>Software Renderer</title>
     <style>
-        canvas {
-            margin-left: 10%;
-            margin-right: 10%;
-            margin-top: 3%;
-            width: 80%;
-            height: 600px;
+        *{
+            margin: 0;
+            padding: 0;
         }
+        .left{
+            height: 100vh;
+            width: 200px;
+            float: left;
+        }
+
+        .right{
+            margin-left: 200px;
+            height: 100vh;
+        }
+
+        canvas {
+            margin-left: 5%;
+            margin-top: 3%;
+            width: 90%;
+            height: 90%;
+        }
+
     </style>
     <script src="js/math/babylon.math.js"></script>
     <script src="js/renderer.js"></script>
     <script src="js/main.js"></script>
 </head>
 <body>
-    <label>模型文件：</label>
-    <input id="modelFile" type="file" onchange="loadModel()">
-    <canvas id="frontBuffer" width="800" height="500" style="background-color: black;"></canvas>
+    <div class="left">
+        <div style="margin-top: 15%; margin-left: 5%">
+            <div style="color: magenta">
+                <label>FPS : </label>
+                <label id="fpsDisplay">0</label>
+            </div>
+            <div>
+                <label>模型文件：</label>
+                <input id="modelFile" type="file" onchange="loadModel()" style="width: 50%">
+            </div>
+            <div>
+                <label>线框模式：</label>
+                <input id="wireFrameMode" type="checkbox" onchange="UpdateWireFrameMode()">
+            </div>
+            <div>
+                <label>深度测试：</label>
+                <input id="depthTestMode" type="checkbox" onchange="UpdateDepthTestMode()">
+            </div>
+        </div>
+    </div>
+    <div class="right" id="canvasBox">
+        <canvas id="frontBuffer" style="background-color: black;" width="800" height="600"></canvas>
+    </div>
 </body>
 </html>

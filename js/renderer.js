@@ -20,6 +20,8 @@ let SoftwareRenderer;
     SoftwareRenderer.Mesh = Mesh;
     let Device = (function () {
         function Device(canvas) {
+            this.isDepthTest = false;
+            this.isWireFrame = false;
             this.workingCanvas = canvas;
             this.workingWidth = canvas.width;
             this.workingHeight = canvas.height;
@@ -40,7 +42,7 @@ let SoftwareRenderer;
             let index = ((x >> 0) + (y >> 0) * this.workingWidth) * 4;
 
             // 深度测试
-            if (this.depthBuffer[index / 4] < z) {
+            if (this.isDepthTest && this.depthBuffer[index / 4] < z) {
                 return;
             }
 
@@ -71,7 +73,14 @@ let SoftwareRenderer;
                     let p2 = this.project(mesh.Vertices[face.B], transformMatrix);
                     let p3 = this.project(mesh.Vertices[face.C], transformMatrix);
                     let color = 0.25 + ((idx % mesh.Faces.length) / mesh.Faces.length) * 0.75;
-                    this.drawTriangle(p1, p2, p3, new BABYLON.Color4(color, color, color , 1));
+                    let finalColor = new BABYLON.Color4(color, color, color , 1);
+                    if (this.isWireFrame){
+                        this.drawLine(p1 , p2 , finalColor);
+                        this.drawLine(p2 , p3 , finalColor);
+                        this.drawLine(p3 , p1 , finalColor);
+                    } else {
+                        this.drawTriangle(p1, p2, p3, finalColor);
+                    }
                     idx++;
                 });
             });
