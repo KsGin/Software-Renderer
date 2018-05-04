@@ -46,16 +46,16 @@ Device.prototype.drawPoint = function (point, color) {
     }
 };
 
-Device.prototype.render = function (camera, meshes, worldMatrix, viewMatrix, projectionMatrix) {
+Device.prototype.render = function (camera, model , worldMatrix, viewMatrix, projectionMatrix) {
     let transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
-    meshes.forEach(mesh => {
+    model.meshes.forEach(mesh => {
         let idx = 0;
         mesh.Faces.forEach(face => {
-            let p1 = this.project(mesh.Vertices[face.A], transformMatrix);
-            let p2 = this.project(mesh.Vertices[face.B], transformMatrix);
-            let p3 = this.project(mesh.Vertices[face.C], transformMatrix);
+            let p1 = this.project(mesh.Vertices[face.A].position, transformMatrix);
+            let p2 = this.project(mesh.Vertices[face.B].position, transformMatrix);
+            let p3 = this.project(mesh.Vertices[face.C].position, transformMatrix);
             let color = 0.25 + ((idx % mesh.Faces.length) / mesh.Faces.length) * 0.75;
-            let finalColor = new Color4(color, color, color, 1);
+            let finalColor = new Color4(color, color, 0, 1);
             if (this.isWireFrame) {
                 this.drawLine(p1, p2, finalColor);
                 this.drawLine(p2, p3, finalColor);
