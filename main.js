@@ -26,7 +26,7 @@ window.onload = function () {
     device = new Device(canvas);
 };
 
-function StartRenderModel() {
+function StartConfigRender() {
 
     camera = new Camera();
     camera.Position = new Vector3(0, 5, 10);

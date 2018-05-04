@@ -156,10 +156,6 @@ Device.prototype.processScanLine = function (y, va, vb, vc, vd, color) {
 
 Device.prototype.drawTriangle = function (p1, p2, p3, color) {
 
-    console.log(p1);
-    console.log(p2);
-    console.log(p3);
-
     let y;
     let temp;
     if (p1.position2D.y > p2.position2D.y) {
