@@ -29,7 +29,7 @@ window.onload = function () {
 function StartConfigRender() {
 
     camera = new Camera();
-    camera.Position = new Vector3(0, 5, 10);
+    camera.Position = new Vector3(0, 10, 10);
     camera.Target = new Vector3(0, 0, 0);
 
     model = new Model();

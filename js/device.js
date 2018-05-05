@@ -45,10 +45,10 @@ Device.prototype.project = function (vertex, transMat, worldMat) {
     let normal3D = Vector3.TransformNormal(vertex.normal, worldMat);
 
     return ({
-        position2D : new Vector3(x , y , position2D.z) ,
-        position3D : position3D ,
-        normal3D : normal3D ,
-        texcoord : vertex.texcoord
+        position2D: new Vector3(x, y, position2D.z),
+        position3D: position3D,
+        normal3D: normal3D,
+        texcoord: vertex.texcoord
     });
 };
 
@@ -67,8 +67,7 @@ Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, proj
             let v2 = this.project(mesh.Vertices[face.B], transformMatrix, worldMatrix);
             let v3 = this.project(mesh.Vertices[face.C], transformMatrix, worldMatrix);
 
-            let color = 0.25 + ((idx % mesh.Faces.length) / mesh.Faces.length) * 0.75;
-            let finalColor = new Color4(color, color, 0, 1);
+            let finalColor = new Color4(1, 1, 0, 1);
 
             if (this.isWireFrame) {
                 this.drawLine(v1, v2, finalColor);
@@ -123,15 +122,15 @@ Device.prototype.interpolate = function (min, max, gradient) {
     return min + (max - min) * this.clamp(gradient);
 };
 
-Device.prototype.processScanLine = function (y, va, vb, vc, vd, color) {
+Device.prototype.processScanLine = function (data, va, vb, vc, vd, color) {
 
     let pa = va.position2D;
     let pb = vb.position2D;
     let pc = vc.position2D;
     let pd = vd.position2D;
 
-    let gradient1 = (pa.y !== pb.y) ? (y - pa.y) / (pb.y - pa.y) : 1;
-    let gradient2 = (pc.y !== pd.y) ? (y - pc.y) / (pd.y - pc.y) : 1;
+    let gradient1 = (pa.y !== pb.y) ? (data.y - pa.y) / (pb.y - pa.y) : 1;
+    let gradient2 = (pc.y !== pd.y) ? (data.y - pc.y) / (pd.y - pc.y) : 1;
 
     let sx = this.interpolate(pa.x, pb.x, gradient1) >> 0;
     let ex = this.interpolate(pc.x, pd.x, gradient2) >> 0;
@@ -147,64 +146,106 @@ Device.prototype.processScanLine = function (y, va, vb, vc, vd, color) {
     let z1 = this.interpolate(pa.z, pb.z, gradient1);
     let z2 = this.interpolate(pc.z, pd.z, gradient2);
 
+    let snl = this.interpolate(data.nldota, data.nldotb, gradient1);
+    let enl = this.interpolate(data.nldotc, data.nldotd, gradient2);
+
     for (let x = sx; x < ex; x++) {
         let gradient = (x - sx) / (ex - sx);
         let z = this.interpolate(z1, z2, gradient);
-        this.drawPoint(new Vector3(x, y, z), color);
+
+        let notl = this.interpolate(snl , enl , gradient);
+
+        this.drawPoint(new Vector3(x, data.y, z), new Color4(color.r * notl, color.g * notl, color.b * notl, 1.0));
     }
 };
 
-Device.prototype.drawTriangle = function (p1, p2, p3, color) {
+Device.prototype.drawTriangle = function (v1, v2, v3, color) {
 
     let y;
     let temp;
-    if (p1.position2D.y > p2.position2D.y) {
-        temp = p2;
-        p2 = p1;
-        p1 = temp;
+    if (v1.position2D.y > v2.position2D.y) {
+        temp = v2;
+        v2 = v1;
+        v1 = temp;
     }
-    if (p2.position2D.y > p3.position2D.y) {
-        temp = p2;
-        p2 = p3;
-        p3 = temp;
+    if (v2.position2D.y > v3.position2D.y) {
+        temp = v2;
+        v2 = v3;
+        v3 = temp;
     }
-    if (p1.position2D.y > p2.position2D.y) {
-        temp = p2;
-        p2 = p1;
-        p1 = temp;
+    if (v1.position2D.y > v2.position2D.y) {
+        temp = v2;
+        v2 = v1;
+        v1 = temp;
     }
+
+    // 光照位置
+    let lightPos = new Vector3(0, 10, 0);
+
+    // 计算光向量和法线向量之间夹角的余弦
+    // 它会返回介于0和1之间的值，该值将被用作颜色的亮度
+    let nldot1 = this.computeNDotL(v1.position3D, v1.normal3D, lightPos);
+    let nldot2 = this.computeNDotL(v2.position3D, v2.normal3D, lightPos);
+    let nldot3 = this.computeNDotL(v3.position3D, v3.normal3D, lightPos);
+
+    let data = {};
 
     // 反向斜率
     let dP1P2;
     let dP1P3;
 
-    if (p2.position2D.y - p1.position2D.y > 0) {
-        dP1P2 = (p2.position2D.x - p1.position2D.x) / (p2.position2D.y - p1.position2D.y);
+    if (v2.position2D.y - v1.position2D.y > 0) {
+        dP1P2 = (v2.position2D.x - v1.position2D.x) / (v2.position2D.y - v1.position2D.y);
     } else {
         dP1P2 = 0;
     }
 
-    if (p3.position2D.y - p1.position2D.y > 0) {
-        dP1P3 = (p3.position2D.x - p1.position2D.x) / (p3.position2D.y - p1.position2D.y);
+    if (v3.position2D.y - v1.position2D.y > 0) {
+        dP1P3 = (v3.position2D.x - v1.position2D.x) / (v3.position2D.y - v1.position2D.y);
     } else {
         dP1P3 = 0;
     }
 
     if (dP1P2 > dP1P3) {
-        for (y = p1.position2D.y >> 0; y <= p3.position2D.y >> 0; y++) {
-            if (y < p2.position2D.y) {
-                this.processScanLine(y, p1, p3, p1, p2, color);
+        for (y = v1.position2D.y >> 0; y <= v3.position2D.y >> 0; y++) {
+            data.y = y;
+            data.nldota = nldot1;
+            data.nldotb = nldot3;
+            if (y < v2.position2D.y) {
+                data.nldotc = nldot1;
+                data.nldotd = nldot2;
+                this.processScanLine(data, v1, v3, v1, v2, color);
             } else {
-                this.processScanLine(y, p1, p3, p2, p3, color);
+                data.nldotc = nldot3;
+                data.nldotd = nldot3;
+                this.processScanLine(data, v1, v3, v2, v3, color);
             }
         }
     } else {
-        for (y = p1.position2D.y >> 0; y <= p3.position2D.y >> 0; y++) {
-            if (y < p2.position2D.y) {
-                this.processScanLine(y, p1, p2, p1, p3, color);
+        for (y = v1.position2D.y >> 0; y <= v3.position2D.y >> 0; y++) {
+            data.y = y;
+            data.nldotc = nldot1;
+            data.nldotd = nldot3;
+            if (y < v2.position2D.y) {
+                data.nldota = nldot1;
+                data.nldotb = nldot2;
+                this.processScanLine(data, v1, v2, v1, v3, color);
             } else {
-                this.processScanLine(y, p2, p3, p1, p3, color);
+                data.nldota = nldot2;
+                data.nldotb = nldot3;
+                this.processScanLine(data, v2, v3, v1, v3, color);
             }
         }
     }
+};
+
+// 计算光向量和法线向量之间角度的余弦
+// 返回0到1之间的值
+Device.prototype.computeNDotL = function (vertex, normal, lightPosition) {
+    let lightDirection = lightPosition.subtract(vertex);
+
+    normal.normalize();
+    lightDirection.normalize();
+
+    return Math.max(0, Vector3.Dot(normal, lightDirection));
 };
