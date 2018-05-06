@@ -58,7 +58,7 @@ Device.prototype.drawPoint = function (point, color) {
     }
 };
 
-Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, projectionMatrix) {
+Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, projectionMatrix , texture) {
     let transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
     model.meshes.forEach(mesh => {
         let idx = 0;
@@ -74,7 +74,7 @@ Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, proj
                 this.drawLine(v2, v3, finalColor);
                 this.drawLine(v3, v1, finalColor);
             } else {
-                this.drawTriangle(v1, v2, v3, finalColor);
+                this.drawTriangle(v1, v2, v3, finalColor , texture);
             }
             idx++;
         });
@@ -122,7 +122,7 @@ Device.prototype.interpolate = function (min, max, gradient) {
     return min + (max - min) * this.clamp(gradient);
 };
 
-Device.prototype.processScanLine = function (data, va, vb, vc, vd, color) {
+Device.prototype.processScanLine = function (data, va, vb, vc, vd, color , texture) {
 
     let pa = va.position2D;
     let pb = vb.position2D;
@@ -146,20 +146,39 @@ Device.prototype.processScanLine = function (data, va, vb, vc, vd, color) {
     let z1 = this.interpolate(pa.z, pb.z, gradient1);
     let z2 = this.interpolate(pc.z, pd.z, gradient2);
 
+    // 将纹理坐标插值到Y中
+    let su = this.interpolate(va.texcoord.x, vb.texcoord.x, gradient1);
+    let eu = this.interpolate(vc.texcoord.x, vd.texcoord.x, gradient2);
+    let sv = this.interpolate(va.texcoord.y, vb.texcoord.y, gradient1);
+    let ev = this.interpolate(vc.texcoord.y, vd.texcoord.y, gradient2);
+
     let snl = this.interpolate(data.nldota, data.nldotb, gradient1);
     let enl = this.interpolate(data.nldotc, data.nldotd, gradient2);
 
     for (let x = sx; x < ex; x++) {
         let gradient = (x - sx) / (ex - sx);
         let z = this.interpolate(z1, z2, gradient);
-
+        let u = this.interpolate(su, eu, gradient);
+        let v = this.interpolate(sv, ev, gradient);
         let notl = this.interpolate(snl , enl , gradient);
 
-        this.drawPoint(new Vector3(x, data.y, z), new Color4(color.r * notl, color.g * notl, color.b * notl, 1.0));
+        let textureColor;
+
+        if (texture)
+            textureColor = texture.TextureMap(u, v);
+        else
+            textureColor = new Color4(1, 1, 1, 1);
+
+        this.drawPoint(new Vector3(x, data.y, z) , textureColor);
+
+        // this.drawPoint(new Vector3(x, data.y, z), new Color4(
+        //         color.r * textureColor.r * notl,
+        //         color.g * textureColor.g * notl,
+        //         color.b * textureColor.b * notl, 1.0));
     }
 };
 
-Device.prototype.drawTriangle = function (v1, v2, v3, color) {
+Device.prototype.drawTriangle = function (v1, v2, v3, color , texture) {
 
     let y;
     let temp;
@@ -214,11 +233,11 @@ Device.prototype.drawTriangle = function (v1, v2, v3, color) {
             if (y < v2.position2D.y) {
                 data.nldotc = nldot1;
                 data.nldotd = nldot2;
-                this.processScanLine(data, v1, v3, v1, v2, color);
+                this.processScanLine(data, v1, v3, v1, v2, color , texture);
             } else {
                 data.nldotc = nldot2;
                 data.nldotd = nldot3;
-                this.processScanLine(data, v1, v3, v2, v3, color);
+                this.processScanLine(data, v1, v3, v2, v3, color , texture);
             }
         }
     } else {
@@ -229,11 +248,11 @@ Device.prototype.drawTriangle = function (v1, v2, v3, color) {
             if (y < v2.position2D.y) {
                 data.nldota = nldot1;
                 data.nldotb = nldot2;
-                this.processScanLine(data, v1, v2, v1, v3, color);
+                this.processScanLine(data, v1, v2, v1, v3, color , texture);
             } else {
                 data.nldota = nldot2;
                 data.nldotb = nldot3;
-                this.processScanLine(data, v2, v3, v1, v3, color);
+                this.processScanLine(data, v2, v3, v1, v3, color , texture);
             }
         }
     }

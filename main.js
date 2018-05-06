@@ -17,8 +17,8 @@ let worldMatrix;
 let fps;
 let startTime;
 let endTime;
-
 let rolation;
+let texture;
 
 window.onload = function () {
     rolation = 0;
@@ -37,6 +37,8 @@ function StartConfigRender() {
 
     model = new Model();
     model.LoadModelFromMyModelTypeFile();
+
+    texture = new Texture("https://image.ibb.co/bArL17/image.png" , 674 , 706);
 
     worldMatrix = Matrix.Identity().multiply(Matrix.Scaling(0.5, 0.5, 0.5));
     viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
@@ -57,7 +59,7 @@ function Render() {
     startTime = new Date().getTime();
     device.clearColorAndDepth();
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation,0, 0));
-    device.render(camera, model, world, viewMatrix, projectionMatrix);
+    device.render(camera, model, world, viewMatrix, projectionMatrix , texture);
     device.present();
     endTime = new Date().getTime();
 
