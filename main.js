@@ -18,7 +18,10 @@ let fps;
 let startTime;
 let endTime;
 
+let rolation;
+
 window.onload = function () {
+    rolation = 0;
     fps = 60;
     startTime = 0;
     endTime = 0;
@@ -35,8 +38,7 @@ function StartConfigRender() {
     model = new Model();
     model.LoadModelFromMyModelTypeFile();
 
-    worldMatrix = Matrix.Identity();
-    worldMatrix = worldMatrix.multiply(Matrix.Scaling(0.3, 0.3, 0.3));
+    worldMatrix = Matrix.Identity().multiply(Matrix.Scaling(0.5, 0.5, 0.5));
     viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
     projectionMatrix = Matrix.PerspectiveFovLH(0.78, canvas.width / canvas.height, 0.01, 10.0);
 
@@ -44,10 +46,18 @@ function StartConfigRender() {
 }
 
 function Render() {
+
+    let world;
+
+    rolation += 0.005;
+    if (rolation > 360){
+        rolation -= 360;
+    }
+
     startTime = new Date().getTime();
     device.clearColorAndDepth();
-    worldMatrix = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0.01, 0.01, 0));
-    device.render(camera, model, worldMatrix, viewMatrix, projectionMatrix);
+    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation,0, 0));
+    device.render(camera, model, world, viewMatrix, projectionMatrix);
     device.present();
     endTime = new Date().getTime();
 

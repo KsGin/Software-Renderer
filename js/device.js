@@ -180,7 +180,7 @@ Device.prototype.drawTriangle = function (v1, v2, v3, color) {
     }
 
     // 光照位置
-    let lightPos = new Vector3(0, 10, 0);
+    let lightPos = new Vector3(0, 10, 10);
 
     // 计算光向量和法线向量之间夹角的余弦
     // 它会返回介于0和1之间的值，该值将被用作颜色的亮度
@@ -216,7 +216,7 @@ Device.prototype.drawTriangle = function (v1, v2, v3, color) {
                 data.nldotd = nldot2;
                 this.processScanLine(data, v1, v3, v1, v2, color);
             } else {
-                data.nldotc = nldot3;
+                data.nldotc = nldot2;
                 data.nldotd = nldot3;
                 this.processScanLine(data, v1, v3, v2, v3, color);
             }
