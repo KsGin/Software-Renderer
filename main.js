@@ -14,13 +14,19 @@ let camera;
 let viewMatrix;
 let projectionMatrix;
 let worldMatrix;
-let fps;
 let startTime;
 let endTime;
 let rolation;
 let texture;
+let preTime;
+let cutTime;
+let fps;
+let frameCount;
 
 window.onload = function () {
+    frameCount = 0;
+    cutTime = 0;
+    preTime = 0;
     rolation = 0;
     fps = 60;
     startTime = 0;
@@ -56,14 +62,10 @@ function Render() {
         rolation -= 360;
     }
 
-    startTime = new Date().getTime();
     device.clearColorAndDepth();
-    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation,0, 0));
+    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation,rolation, 0));
     device.render(camera, model, world, viewMatrix, projectionMatrix , texture);
     device.present();
-    endTime = new Date().getTime();
-
-    fps = (1000 / (endTime - startTime)) >> 0;
 
     displayFPS();
 
@@ -72,6 +74,15 @@ function Render() {
 
 
 function displayFPS() {
+
+    frameCount += 1;
+
+    cutTime = new Date().getTime();
+    if (cutTime - preTime > 1000){
+        preTime = cutTime;
+        fps = frameCount;
+        frameCount = 0;
+    }
 
     document.getElementById("fpsDisplay").innerText = fps;
 }

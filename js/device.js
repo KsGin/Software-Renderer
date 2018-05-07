@@ -67,7 +67,7 @@ Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, proj
             let v2 = this.project(mesh.Vertices[face.B], transformMatrix, worldMatrix);
             let v3 = this.project(mesh.Vertices[face.C], transformMatrix, worldMatrix);
 
-            let finalColor = new Color4(1, 1, 0, 1);
+            let finalColor = new Color4(1, 1, 1, 1);
 
             if (this.isWireFrame) {
                 this.drawLine(v1, v2, finalColor);
@@ -183,12 +183,10 @@ Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, textur
         else
             textureColor = new Color4(1, 1, 1, 1);
 
-        this.drawPoint(new Vector3(x, data.y, z), textureColor);
-
-        // this.drawPoint(new Vector3(x, data.y, z), new Color4(
-        //         color.r * textureColor.r * notl,
-        //         color.g * textureColor.g * notl,
-        //         color.b * textureColor.b * notl, 1.0));
+        this.drawPoint(new Vector3(x, data.y, z), new Color4(
+            color.r * textureColor.r * notl,
+            color.g * textureColor.g * notl,
+            color.b * textureColor.b * notl, 1.0));
     }
 };
 
