@@ -38,7 +38,7 @@ function StartConfigRender() {
     model = new Model();
     model.LoadModelFromMyModelTypeFile();
 
-    texture = new Texture("https://image.ibb.co/bArL17/image.png" , 674 , 706);
+    texture = new Texture("asserts/tex.png" , 674 , 706);
 
     worldMatrix = Matrix.Identity().multiply(Matrix.Scaling(0.5, 0.5, 0.5));
     viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());

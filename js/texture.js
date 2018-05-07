@@ -27,7 +27,7 @@ Texture.prototype.TextureMap = function(tu , tv){
     if (this.internalBuffer) {
         let u = Math.abs(((tu * this.width) % this.width)) >> 0;
         let v = Math.abs(((tv * this.height) % this.height)) >> 0;
-        
+
         let pos = (u + v * this.width) * 4;
 
         let r = this.internalBuffer.data[pos];
