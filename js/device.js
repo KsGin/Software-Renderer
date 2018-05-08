@@ -118,8 +118,12 @@ Device.prototype.clamp = function (value, min, max) {
 };
 
 // 过渡插值
-Device.prototype.interpolate = function (min, max, gradient) {
-    return min + (max - min) * this.clamp(gradient);
+Device.prototype.interpolate = function (val1, val2, gradient) {
+    if (val1 > val2) {
+        return val1 - (val1 - val2) * this.clamp(gradient);
+    } else {
+        return val1 + (val2 - val1) * this.clamp(gradient);
+    }
 };
 
 Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, texture) {
@@ -251,6 +255,7 @@ Device.prototype.drawTriangle = function (v1, v2, v3, color, texture) {
                 data.nldotd = nldot3;
                 this.processScanLine(data, v1, v3, v2, v3, color, texture);
             }
+
         }
     } else {
         for (y = v1.position2D.y >> 0; y <= v3.position2D.y >> 0; y++) {
