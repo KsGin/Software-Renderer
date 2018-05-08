@@ -173,6 +173,8 @@ Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, textur
         enl = tmp;
     }
 
+    // if (su > eu) console.log(su , eu);
+
     for (let x = sx; x < ex; x++) {
         let gradient = (x - sx) / (ex - sx);
         let z = this.interpolate(z1, z2, gradient);
