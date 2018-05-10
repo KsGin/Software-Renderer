@@ -22,6 +22,7 @@ let preTime;
 let cutTime;
 let fps;
 let frameCount;
+let light;
 
 window.onload = function () {
     frameCount = 0;
@@ -33,6 +34,14 @@ window.onload = function () {
     endTime = 0;
     canvas = document.getElementById("frontBuffer");
     device = new Device(canvas);
+
+
+    document.getElementById("lightDirectionX").value = 0;
+    document.getElementById("lightDirectionY").value = 10;
+    document.getElementById("lightDirectionZ").value = 0;
+
+    light = new Light();
+    light.diffuseLight = new DiffuseLight(0 , 10 , 0);
 };
 
 function StartConfigRender() {
@@ -64,7 +73,7 @@ function Render() {
 
     device.clearColorAndDepth();
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation,rolation, 0));
-    device.render(camera, model, world, viewMatrix, projectionMatrix , texture);
+    device.render(camera, model, world, viewMatrix, projectionMatrix , texture , light);
     device.present();
 
     displayFPS();
@@ -93,4 +102,14 @@ function UpdateWireFrameMode() {
 
 function UpdateDepthTestMode() {
     device.isDepthTest = !device.isDepthTest;
+}
+
+function UpdateLightDirection() {
+    let x , y , z;
+    x = Number(document.getElementById("lightDirectionX").value);
+    y = Number(document.getElementById("lightDirectionY").value);
+    z = Number(document.getElementById("lightDirectionZ").value);
+    light.diffuseLight.direction.x = x;
+    light.diffuseLight.direction.y = y;
+    light.diffuseLight.direction.z = z;
 }

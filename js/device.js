@@ -58,7 +58,7 @@ Device.prototype.drawPoint = function (point, color) {
     }
 };
 
-Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, projectionMatrix, texture) {
+Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, projectionMatrix, texture, light) {
     let transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
     model.meshes.forEach(mesh => {
         let idx = 0;
@@ -74,7 +74,7 @@ Device.prototype.render = function (camera, model, worldMatrix, viewMatrix, proj
                 this.drawLine(v2, v3, finalColor);
                 this.drawLine(v3, v1, finalColor);
             } else {
-                this.drawTriangle(v1, v2, v3, finalColor, texture);
+                this.drawTriangle(v1, v2, v3, finalColor, texture, light);
             }
             idx++;
         });
@@ -196,7 +196,7 @@ Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, textur
     }
 };
 
-Device.prototype.drawTriangle = function (v1, v2, v3, color, texture) {
+Device.prototype.drawTriangle = function (v1, v2, v3, color, texture, light) {
 
     let y;
     let temp;
@@ -216,14 +216,19 @@ Device.prototype.drawTriangle = function (v1, v2, v3, color, texture) {
         v1 = temp;
     }
 
-    // 光照位置
-    let lightPos = new Vector3(0, 10, 10);
+    let nldot1, nldot2, nldot3;
 
-    // 计算光向量和法线向量之间夹角的余弦
-    // 它会返回介于0和1之间的值，该值将被用作颜色的亮度
-    let nldot1 = this.computeNDotL(v1.position3D, v1.normal3D, lightPos);
-    let nldot2 = this.computeNDotL(v2.position3D, v2.normal3D, lightPos);
-    let nldot3 = this.computeNDotL(v3.position3D, v3.normal3D, lightPos);
+    if (light.diffuseLight != null) {
+        // 计算光向量和法线向量之间夹角的余弦
+        // 它会返回介于0和1之间的值，该值将被用作颜色的亮度
+        nldot1 = this.computeNDotL(v1.position3D, v1.normal3D, light.diffuseLight.direction);
+        nldot2 = this.computeNDotL(v2.position3D, v2.normal3D, light.diffuseLight.direction);
+        nldot3 = this.computeNDotL(v3.position3D, v3.normal3D, light.diffuseLight.direction);
+    } else {
+        nldot1 = 1;
+        nldot2 = 1;
+        nldot3 = 1;
+    }
 
     let data = {};
 
