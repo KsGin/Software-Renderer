@@ -128,6 +128,10 @@ Device.prototype.interpolate = function (val1, val2, gradient) {
 
 Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, texture) {
 
+    // if(va.position2D.x >= vc.position2D.x){
+    //     console.log(va , vb , vc , vd);
+    // }
+
     let pa = va.position2D;
     let pb = vb.position2D;
     let pc = vc.position2D;
@@ -172,8 +176,6 @@ Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, textur
         snl = enl;
         enl = tmp;
     }
-
-    // if (su > eu) console.log(su , eu);
 
     for (let x = sx; x < ex; x++) {
         let gradient = (x - sx) / (ex - sx);
