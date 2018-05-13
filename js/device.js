@@ -119,18 +119,10 @@ Device.prototype.clamp = function (value, min, max) {
 
 // 过渡插值
 Device.prototype.interpolate = function (val1, val2, gradient) {
-    if (val1 > val2) {
-        return val1 - (val1 - val2) * this.clamp(gradient);
-    } else {
-        return val1 + (val2 - val1) * this.clamp(gradient);
-    }
+    return val1 + (val2 - val1) * this.clamp(gradient);
 };
 
 Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, texture) {
-
-    // if(va.position2D.x >= vc.position2D.x){
-    //     console.log(va , vb , vc , vd);
-    // }
 
     let pa = va.position2D;
     let pb = vb.position2D;
@@ -169,12 +161,15 @@ Device.prototype.processScanLine = function (data, va, vb, vc, vd, color, textur
         let tmp = sx;
         sx = ex;
         ex = tmp;
-    }
-
-    if (snl > enl) {
-        let tmp = snl;
+        tmp = snl;
         snl = enl;
         enl = tmp;
+        tmp = su;
+        su = eu;
+        eu = tmp;
+        tmp = sv;
+        sv = ev;
+        ev = tmp;
     }
 
     for (let x = sx; x < ex; x++) {
