@@ -43,13 +43,13 @@ window.onload = function () {
     document.getElementById("lightDirectionZ").value = 10;
 
     light = new Light();
-    light.diffuseLight = new DiffuseLight(0, 10, 10);
+    light.directionLight = new DirectionLight(0, 10, 10);
 };
 
 function StartConfigRender() {
 
     camera = new Camera();
-    camera.Position = new Vector3(0, 3, 3);
+    camera.Position = new Vector3(0, 2, 2);
     camera.Target = new Vector3(0, 0, 0);
 
     let cubeModel = new Model();
@@ -84,17 +84,17 @@ function Render() {
     }
 
     device.clearColorAndDepth();
-    //
+
     // world = worldMatrix.multiply(Matrix.Translation(0 , 0 , 0));
     // device.render(models[1], world, viewMatrix, projectionMatrix, textures[2], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
-        .multiply(Matrix.Translation(1, 0, 0))
+        .multiply(Matrix.Translation(1, 1, 0))
         .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
     device.render(models[0], world, viewMatrix, projectionMatrix, textures[1], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(-rolation, -rolation, 0))
-        .multiply(Matrix.Translation(-1, 0, 0))
+        .multiply(Matrix.Translation(-1, 1, 0))
         .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
     device.render(models[0], world, viewMatrix, projectionMatrix, textures[0], light);
 
@@ -133,7 +133,7 @@ function UpdateLightDirection() {
     x = Number(document.getElementById("lightDirectionX").value);
     y = Number(document.getElementById("lightDirectionY").value);
     z = Number(document.getElementById("lightDirectionZ").value);
-    light.diffuseLight.direction.x = x;
-    light.diffuseLight.direction.y = y;
-    light.diffuseLight.direction.z = z;
+    light.directionLight.direction.x = x;
+    light.directionLight.direction.y = y;
+    light.directionLight.direction.z = z;
 }

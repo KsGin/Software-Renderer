@@ -20,7 +20,7 @@ ShaderDevice.prototype.DirectionLightShader_VS = function (vsInput, worldMatrix,
 ShaderDevice.prototype.DirectionLightShader_PS = function (psInput, texture, light) {
 
     let normal = psInput.normal;
-    let lightd = light.diffuseLight.direction;
+    let lightd = light.directionLight.direction;
 
     normal.normalize();
     lightd.normalize();
@@ -35,7 +35,7 @@ ShaderDevice.prototype.DirectionLightShader_PS = function (psInput, texture, lig
         textureColor = new Color4(1, 1, 1, 1);
     }
 
-    textureColor = new Color4(nd * textureColor.r, nd * textureColor.g, nd * textureColor.b, textureColor.a);
+    textureColor = textureColor.multiply(nd);
 
     return textureColor;
 };

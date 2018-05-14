@@ -62,12 +62,12 @@ Model.prototype.InitGroundPlane = function () {
     let texcoord;
     let normal;
 
-    positions[0] = new Vector3(-1, -1, 1);
-    positions[1] = new Vector3(-1, -1, -1);
-    positions[2] = new Vector3(1, -1, -1);
-    positions[3] = new Vector3(-1, -1, 1);
-    positions[4] = new Vector3(1, -1, -1);
-    positions[5] = new Vector3(1, -1, 1);
+    positions[0] = new Vector3(-1, 0, 1);
+    positions[1] = new Vector3(-1, 0, -1);
+    positions[2] = new Vector3(1, 0, -1);
+    positions[3] = new Vector3(-1, 0, 1);
+    positions[4] = new Vector3(1, 0, -1);
+    positions[5] = new Vector3(1, 0, 1);
 
     texcoord = new Vector2(0, 0);
     normal = new Vector3(0, 1, 0);
