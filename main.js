@@ -9,7 +9,7 @@ window.requestAnimationFrame = (function () {
 
 let canvas;
 let device;
-let model;
+let models;
 let camera;
 let viewMatrix;
 let projectionMatrix;
@@ -17,12 +17,12 @@ let worldMatrix;
 let startTime;
 let endTime;
 let rolation;
-let texture;
 let preTime;
 let cutTime;
 let fps;
 let frameCount;
 let light;
+let textures;
 
 window.onload = function () {
     frameCount = 0;
@@ -34,6 +34,8 @@ window.onload = function () {
     endTime = 0;
     canvas = document.getElementById("frontBuffer");
     device = new Device(canvas);
+    models = [];
+    textures = [];
 
 
     document.getElementById("lightDirectionX").value = 0;
@@ -41,7 +43,7 @@ window.onload = function () {
     document.getElementById("lightDirectionZ").value = 0;
 
     light = new Light();
-    light.diffuseLight = new DiffuseLight(0 , 10 , 0);
+    light.diffuseLight = new DiffuseLight(0, 10, 0);
 };
 
 function StartConfigRender() {
@@ -50,10 +52,20 @@ function StartConfigRender() {
     camera.Position = new Vector3(0, 10, 10);
     camera.Target = new Vector3(0, 0, 0);
 
-    model = new Model();
-    model.LoadModelFromMyModelTypeFile();
+    let cubeModel = new Model();
+    cubeModel.LoadModelFromMyModelTypeFile(1);
+    models.push(cubeModel);
 
-    texture = new Texture("asserts/tex1.png" , 1364 , 764);
+    let planeModel = new Model();
+    planeModel.LoadModelFromMyModelTypeFile(0);
+    models.push(planeModel);
+
+    let cubeTexture = new Texture("asserts/tex.png", 674, 706);
+    textures.push(cubeTexture);
+
+    let planeTexture = new Texture("asserts/tex1.png", 1364, 764);
+    textures.push(planeTexture);
+
 
     worldMatrix = Matrix.Identity().multiply(Matrix.Scaling(0.5, 0.5, 0.5));
     viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
@@ -67,13 +79,19 @@ function Render() {
     let world;
 
     rolation += 0.005;
-    if (rolation > 360){
+    if (rolation > 360) {
         rolation -= 360;
     }
 
     device.clearColorAndDepth();
-    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation,rolation, 0));
-    device.render(camera, model, world, viewMatrix, projectionMatrix , texture , light);
+
+    world = worldMatrix;
+    device.render(camera, models[0], world, viewMatrix, projectionMatrix, textures[0], light);
+
+    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
+        .multiply(Matrix.Translation(0 , 1, 0));
+    device.render(camera, models[1], world, viewMatrix, projectionMatrix, textures[1], light);
+
     device.present();
 
     displayFPS();
@@ -87,7 +105,7 @@ function displayFPS() {
     frameCount += 1;
 
     cutTime = new Date().getTime();
-    if (cutTime - preTime > 1000){
+    if (cutTime - preTime > 1000) {
         preTime = cutTime;
         fps = frameCount;
         frameCount = 0;
@@ -105,7 +123,7 @@ function UpdateDepthTestMode() {
 }
 
 function UpdateLightDirection() {
-    let x , y , z;
+    let x, y, z;
     x = Number(document.getElementById("lightDirectionX").value);
     y = Number(document.getElementById("lightDirectionY").value);
     z = Number(document.getElementById("lightDirectionZ").value);

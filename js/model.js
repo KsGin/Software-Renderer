@@ -14,13 +14,13 @@ function Model() {
     this.meshes = [];
 }
 
-Model.prototype.LoadModelFromMyModelTypeFile = function () {
+Model.prototype.LoadModelFromMyModelTypeFile = function (i) {
 
     let meshes = [];
 
     let mesh = new Mesh;
     // get file
-    let modelFile = document.getElementById("modelFile").files[0];
+    let modelFile = document.getElementById("modelFile").files[i];
     let reader = new FileReader();
 
     reader.onload = function (res) {
