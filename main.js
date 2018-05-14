@@ -49,7 +49,7 @@ window.onload = function () {
 function StartConfigRender() {
 
     camera = new Camera();
-    camera.Position = new Vector3(0, 10, 10);
+    camera.Position = new Vector3(0, 3, 3);
     camera.Target = new Vector3(0, 0, 0);
 
     let cubeModel = new Model();
@@ -78,24 +78,25 @@ function Render() {
 
     let world;
 
-    rolation += 0.005;
+    rolation += 0.008;
     if (rolation > 360) {
         rolation -= 360;
     }
 
     device.clearColorAndDepth();
-
-    world = worldMatrix.multiply(Matrix.Scaling(8 , 1, 8)).multiply(Matrix.Translation(0 , -1 , 0));
-    device.render(models[1], world, viewMatrix, projectionMatrix, textures[2], light);
+    //
+    // world = worldMatrix.multiply(Matrix.Translation(0 , 0 , 0));
+    // device.render(models[1], world, viewMatrix, projectionMatrix, textures[2], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
-        .multiply(Matrix.Translation(1, 0, 0));
+        .multiply(Matrix.Translation(1, 0, 0))
+        .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
     device.render(models[0], world, viewMatrix, projectionMatrix, textures[1], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(-rolation, -rolation, 0))
-        .multiply(Matrix.Translation(-1, 0, 0));
+        .multiply(Matrix.Translation(-1, 0, 0))
+        .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
     device.render(models[0], world, viewMatrix, projectionMatrix, textures[0], light);
-
 
     device.present();
 
@@ -120,11 +121,11 @@ function displayFPS() {
 }
 
 function UpdateWireFrameMode() {
-    device.isWireFrame = !device.isWireFrame;
+    device.enableWireFrame = !device.enableWireFrame;
 }
 
 function UpdateDepthTestMode() {
-    device.isDepthTest = !device.isDepthTest;
+    device.enableDepthTest = !device.enableDepthTest;
 }
 
 function UpdateLightDirection() {

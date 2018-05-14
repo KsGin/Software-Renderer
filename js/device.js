@@ -1,6 +1,6 @@
 function Device(canvas) {
-    this.isDepthTest = true;
-    this.isWireFrame = false;
+    this.enableDepthTest = true;
+    this.enableWireFrame = false;
     this.workingCanvas = canvas;
     this.workingWidth = canvas.width;
     this.workingHeight = canvas.height;
@@ -9,7 +9,7 @@ function Device(canvas) {
 }
 
 Device.prototype.clearColorAndDepth = function () {
-    this.workingContext.clearRect(0, 0, this.workingWidth, this.workingHeight);
+    this.workingContext.clearRect( 0 , 0 , this.workingWidth , this.workingHeight);
     this.backbuffer = this.workingContext.getImageData(0, 0, this.workingWidth, this.workingHeight);
     this.depthBuffer.fill(1000, 0, this.workingWidth * this.workingHeight);
 };
@@ -28,7 +28,7 @@ Device.prototype.drawPoint = function (point, color) {
         let index = ((x >> 0) + (y >> 0) * this.workingWidth) * 4;
 
         // 深度测试
-        if (this.isDepthTest && this.depthBuffer[index / 4] < z) {
+        if (this.enableDepthTest && this.depthBuffer[index / 4] < z) {
             return;
         }
 
@@ -53,40 +53,15 @@ Device.prototype.render = function (model, worldMatrix, viewMatrix, projectionMa
             let v2 = shader.DirectionLightShader_VS(mesh.Vertices[face.B] , worldMatrix , viewMatrix , projectionMatrix);
             let v3 = shader.DirectionLightShader_VS(mesh.Vertices[face.C] , worldMatrix , viewMatrix , projectionMatrix);
 
-
-            if (this.isWireFrame) {
-                this.drawLine(v1, v2);
-                this.drawLine(v2, v3);
-                this.drawLine(v3, v1);
+            if (this.enableWireFrame) {
+                raster.WireFrameRaster(v1 , v2 , v3);
             } else {
-                raster.Raster(v1 , v2 , v3 , texture , light);
+                let res = raster.SolidRaster(v1 , v2 , v3);
+                res.forEach(v => {
+                   let color = shader.DirectionLightShader_PS(v , texture , light);
+                   this.drawPoint(v.position , color);
+                });
             }
         });
     });
-};
-
-
-Device.prototype.drawLine = function (v0, v1) {
-    let x0 = v0.position2D.x >> 0;
-    let y0 = v0.position2D.y >> 0;
-    let x1 = v1.position2D.x >> 0;
-    let y1 = v1.position2D.y >> 0;
-    let dx = Math.abs(x1 - x0);
-    let dy = Math.abs(y1 - y0);
-    let sx = (x0 < x1) ? 1 : -1;
-    let sy = (y0 < y1) ? 1 : -1;
-    let err = dx - dy;
-    while (true) {
-        this.device.drawPoint(new Vector2(x0, y0, 1.0), new Color4(1 , 1 , 1, 1));
-        if ((x0 === x1) && (y0 === y1)) break;
-        let e2 = 2 * err;
-        if (e2 > -dy) {
-            err -= dy;
-            x0 += sx;
-        }
-        if (e2 < dx) {
-            err += dx;
-            y0 += sy;
-        }
-    }
 };

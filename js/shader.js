@@ -2,28 +2,40 @@ function ShaderDevice(device) {
     this.device = device;
 }
 
-ShaderDevice.prototype.DirectionLightShader_VS = function (vertex , worldMatrix , viewMatrix , projectionMatrix) {
+ShaderDevice.prototype.DirectionLightShader_VS = function (vsInput, worldMatrix, viewMatrix, projectionMatrix) {
 
     let transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
 
-    let position2D = Vector3.TransformCoordinates(vertex.position, transformMatrix);
+    let position2D = Vector3.TransformCoordinates(vsInput.position, transformMatrix);
 
-    let x = -position2D.x * this.device.workingWidth + this.device.workingWidth / 2.0 >> 0;
-    let y = -position2D.y * this.device.workingHeight + this.device.workingHeight / 2.0 >> 0;
-
-    let position3D = Vector3.TransformCoordinates(vertex.position, worldMatrix);
-    let normal3D = Vector3.TransformNormal(vertex.normal, worldMatrix);
+    let normal = Vector3.TransformNormal(vsInput.normal, worldMatrix);
 
     return ({
-        position2D: new Vector3(x, y, position2D.z),
-        position3D: position3D,
-        normal3D: normal3D,
-        texcoord: vertex.texcoord
+        position: position2D,
+        normal: normal,
+        texcoord: vsInput.texcoord
     });
 };
 
+ShaderDevice.prototype.DirectionLightShader_PS = function (psInput, texture, light) {
 
+    let normal = psInput.normal;
+    let lightd = light.diffuseLight.direction;
 
-ShaderDevice.prototype.DirectionLightShader_PS = function (psInput , texture) {
+    normal.normalize();
+    lightd.normalize();
 
+    let nd = Math.max(0, Vector3.Dot(normal, lightd));
+
+    let textureColor;
+
+    if (texture) {
+        textureColor = texture.TextureMap(psInput.texcoord.x, psInput.texcoord.y);
+    } else {
+        textureColor = new Color4(1, 1, 1, 1);
+    }
+
+    textureColor = new Color4(nd * textureColor.r, nd * textureColor.g, nd * textureColor.b, textureColor.a);
+
+    return textureColor;
 };
