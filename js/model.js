@@ -165,12 +165,12 @@ Model.prototype.InitCube = function () {
     texcoords[34] = new Vector2(1.0, 0.0);
     texcoords[35] = new Vector2(1.0, 1.0);
 
-    normals[0] = new Vector3(0.0, 0.0, 1.0);
-    normals[1] = new Vector3(0.0, 0.0, 1.0);
-    normals[2] = new Vector3(0.0, 0.0, 1.0);
-    normals[3] = new Vector3(0.0, 0.0, 1.0);
-    normals[4] = new Vector3(0.0, 0.0, 1.0);
-    normals[5] = new Vector3(0.0, 0.0, 1.0);
+    normals[0] = new Vector3(0.0, 0.0, -1.0);
+    normals[1] = new Vector3(0.0, 0.0, -1.0);
+    normals[2] = new Vector3(0.0, 0.0, -1.0);
+    normals[3] = new Vector3(0.0, 0.0, -1.0);
+    normals[4] = new Vector3(0.0, 0.0, -1.0);
+    normals[5] = new Vector3(0.0, 0.0, -1.0);
     normals[6] = new Vector3(1.0, 0.0, 0.0);
     normals[7] = new Vector3(1.0, 0.0, 0.0);
     normals[8] = new Vector3(1.0, 0.0, 0.0);
@@ -195,12 +195,12 @@ Model.prototype.InitCube = function () {
     normals[27] = new Vector3(0.0, 1.0, 0.0);
     normals[28] = new Vector3(0.0, 1.0, 0.0);
     normals[29] = new Vector3(0.0, 1.0, 0.0);
-    normals[30] = new Vector3(0.0, 1.0, 0.0);
-    normals[31] = new Vector3(0.0, 1.0, 0.0);
-    normals[32] = new Vector3(0.0, 1.0, 0.0);
-    normals[33] = new Vector3(0.0, 1.0, 0.0);
-    normals[34] = new Vector3(0.0, 1.0, 0.0);
-    normals[35] = new Vector3(0.0, 1.0, 0.0);
+    normals[30] = new Vector3(0.0, -1.0, 0.0);
+    normals[31] = new Vector3(0.0, -1.0, 0.0);
+    normals[32] = new Vector3(0.0, -1.0, 0.0);
+    normals[33] = new Vector3(0.0, -1.0, 0.0);
+    normals[34] = new Vector3(0.0, -1.0, 0.0);
+    normals[35] = new Vector3(0.0, -1.0, 0.0);
 
     for (let i = 0; i < 36; ++i) {
         mesh.Vertices[i] = new Vertex(positions[i], texcoords[i], normals[i]);
@@ -209,7 +209,6 @@ Model.prototype.InitCube = function () {
     for (let i = 0; i < 12; ++i) {
         mesh.Faces[i] = {A: i * 3, B: i * 3 + 1, C: i * 3 + 2}
     }
-
 
     this.meshes = meshes;
 };

@@ -86,15 +86,15 @@ function Render() {
     device.clearColorAndDepth();
 
     world = worldMatrix.multiply(Matrix.Scaling(8 , 1, 8)).multiply(Matrix.Translation(0 , -1 , 0));
-    device.render(camera, models[1], world, viewMatrix, projectionMatrix, textures[2], light);
+    device.render(models[1], world, viewMatrix, projectionMatrix, textures[2], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
         .multiply(Matrix.Translation(1, 0, 0));
-    device.render(camera, models[0], world, viewMatrix, projectionMatrix, textures[1], light);
+    device.render(models[0], world, viewMatrix, projectionMatrix, textures[1], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(-rolation, -rolation, 0))
         .multiply(Matrix.Translation(-1, 0, 0));
-    device.render(camera, models[0], world, viewMatrix, projectionMatrix, textures[0], light);
+    device.render(models[0], world, viewMatrix, projectionMatrix, textures[0], light);
 
 
     device.present();

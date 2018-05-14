@@ -8,6 +8,19 @@
             padding: 0;
         }
 
+        canvas {
+            margin-left: 5%;
+            margin-top: 3%;
+            width: 90%;
+            height: 90%;
+        }
+
+        button {
+            width: 100%;
+            height: 30px;
+            margin: 10px;
+        }
+
         .left {
             height: 100vh;
             width: 200px;
@@ -19,13 +32,6 @@
             height: 100vh;
         }
 
-        canvas { 
-            margin-left: 5%;
-            margin-top: 3%;
-            width: 90%;
-            height: 90%;
-        }
-
     </style>
     <script src="js/math/color.js"></script>
     <script src="js/math/matrix.js"></script>
@@ -35,13 +41,15 @@
     <script src="js/model.js"></script>
     <script src="js/texture.js"></script>
     <script src="js/light.js"></script>
+    <script src="js/shader.js"></script>
+    <script src="js/raster.js"></script>
     <script src="main.js"></script>
 </head>
 <body>
 <div class="left">
     <div style="margin-top: 15%; margin-left: 10%">
         <div>
-            <button style="width: 100% ; height: 30px; margin: 10px" onclick="StartConfigRender()">Start</button>
+            <button onclick="StartConfigRender()">Start</button>
         </div>
         <div style="color: magenta">
             <label>FPS : </label>
@@ -71,7 +79,7 @@
     </div>
 </div>
 <div class="right" id="canvasBox">
-    <canvas id="frontBuffer" style="background-color: black;" width="800" height="600"></canvas>
+    <canvas id="frontBuffer" style="background-color: black;" width="1200" height="800"></canvas>
 </div>
 </body>
 </html>
