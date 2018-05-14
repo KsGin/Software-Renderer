@@ -37,13 +37,13 @@ window.onload = function () {
     models = [];
     textures = [];
 
-
+    document.getElementById("depthTestMode").checked = true;
     document.getElementById("lightDirectionX").value = 0;
     document.getElementById("lightDirectionY").value = 10;
-    document.getElementById("lightDirectionZ").value = 0;
+    document.getElementById("lightDirectionZ").value = 10;
 
     light = new Light();
-    light.diffuseLight = new DiffuseLight(0, 10, 0);
+    light.diffuseLight = new DiffuseLight(0, 10, 10);
 };
 
 function StartConfigRender() {
@@ -53,12 +53,12 @@ function StartConfigRender() {
     camera.Target = new Vector3(0, 0, 0);
 
     let cubeModel = new Model();
-    cubeModel.LoadModelFromMyModelTypeFile(1);
+    cubeModel.InitCube();
     models.push(cubeModel);
 
-    let planeModel = new Model();
-    planeModel.LoadModelFromMyModelTypeFile(0);
-    models.push(planeModel);
+    let groundModel = new Model();
+    groundModel.InitGroundPlane();
+    models.push(groundModel);
 
     let cubeTexture = new Texture("asserts/tex.png", 674, 706);
     textures.push(cubeTexture);
@@ -85,12 +85,17 @@ function Render() {
 
     device.clearColorAndDepth();
 
-    world = worldMatrix;
-    device.render(camera, models[0], world, viewMatrix, projectionMatrix, textures[0], light);
+    world = worldMatrix.multiply(Matrix.Scaling(8 , 1, 8)).multiply(Matrix.Translation(0 , -1 , 0));
+    device.render(camera, models[1], world, viewMatrix, projectionMatrix, textures[2], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
-        .multiply(Matrix.Translation(0 , 1, 0));
-    device.render(camera, models[1], world, viewMatrix, projectionMatrix, textures[1], light);
+        .multiply(Matrix.Translation(1, 0, 0));
+    device.render(camera, models[0], world, viewMatrix, projectionMatrix, textures[1], light);
+
+    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(-rolation, -rolation, 0))
+        .multiply(Matrix.Translation(-1, 0, 0));
+    device.render(camera, models[0], world, viewMatrix, projectionMatrix, textures[0], light);
+
 
     device.present();
 

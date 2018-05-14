@@ -39,12 +39,15 @@
 </head>
 <body>
 <div class="left">
-    <div style="margin-top: 15%; margin-left: 5%">
+    <div style="margin-top: 15%; margin-left: 10%">
+        <div>
+            <button style="width: 100% ; height: 30px; margin: 10px" onclick="StartConfigRender()">Start</button>
+        </div>
         <div style="color: magenta">
             <label>FPS : </label>
             <label id="fpsDisplay">0</label>
         </div>
-        <div>
+        <div style="display: none;">
             <label>模型文件：</label>
             <input id="modelFile" type="file" onchange="StartConfigRender()" style="width: 50%" multiple>
         </div>
@@ -58,7 +61,7 @@
         </div>
         <div>
             <label>光照：</label>
-            <div>
+            <div style="margin-left: 20px">
                 <label>diffuse : </label>
                 <input id="lightDirectionX" type="text" onchange="UpdateLightDirection()" style="width: 15%">
                 <input id="lightDirectionY" type="text" onchange="UpdateLightDirection()" style="width: 15%">

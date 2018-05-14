@@ -1,5 +1,5 @@
 function Device(canvas) {
-    this.isDepthTest = false;
+    this.isDepthTest = true;
     this.isWireFrame = false;
     this.workingCanvas = canvas;
     this.workingWidth = canvas.width;
