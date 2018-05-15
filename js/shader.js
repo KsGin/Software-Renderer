@@ -35,7 +35,9 @@ ShaderDevice.prototype.DirectionLightShader_PS = function (psInput, texture, lig
         textureColor = new Color4(1, 1, 1, 1);
     }
 
-    textureColor = textureColor.multiply(nd);
+    let ambient = 0.1;
+
+    textureColor = textureColor.multiply(nd + ambient);
 
     return textureColor;
 };

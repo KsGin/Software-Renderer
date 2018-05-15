@@ -68,9 +68,18 @@
             <input id="depthTestMode" type="checkbox" onchange="UpdateDepthTestMode()">
         </div>
         <div>
+            <label>背面剔除：</label>
+            <div style="margin-left: 20px">
+                <label>CCW : </label>
+                <input id="ccwCullMode" type="checkbox" onchange="UpdateCCWCullMode()">
+                <label>CW : </label>
+                <input id="cwCullMode" type="checkbox" onchange="UpdateCWCullMode()">
+            </div>
+        </div>
+        <div>
             <label>光照：</label>
             <div style="margin-left: 20px">
-                <label>定向光 : </label>
+                <label>平向光 : </label>
                 <input id="lightDirectionX" type="text" onchange="UpdateLightDirection()" style="width: 15%">
                 <input id="lightDirectionY" type="text" onchange="UpdateLightDirection()" style="width: 15%">
                 <input id="lightDirectionZ" type="text" onchange="UpdateLightDirection()" style="width: 15%">

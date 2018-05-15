@@ -38,18 +38,19 @@ window.onload = function () {
     textures = [];
 
     document.getElementById("depthTestMode").checked = true;
-    document.getElementById("lightDirectionX").value = 0;
+    document.getElementById("ccwCullMode").checked = true;
+    document.getElementById("lightDirectionX").value = 10;
     document.getElementById("lightDirectionY").value = 10;
     document.getElementById("lightDirectionZ").value = 10;
 
     light = new Light();
-    light.directionLight = new DirectionLight(0, 10, 10);
+    light.directionLight = new DirectionLight(10, 10, 10);
 };
 
 function StartConfigRender() {
 
     camera = new Camera();
-    camera.Position = new Vector3(0, 2, 2);
+    camera.Position = new Vector3(0, 3, 3);
     camera.Target = new Vector3(0, 0, 0);
 
     let cubeModel = new Model();
@@ -63,7 +64,7 @@ function StartConfigRender() {
     let cubeTexture = new Texture("asserts/tex.png", 674, 706);
     textures.push(cubeTexture);
 
-    let planeTexture = new Texture("asserts/tex1.png", 1364, 764);
+    let planeTexture = new Texture("asserts/tex1.png", 256, 256);
     textures.push(planeTexture);
 
 
@@ -136,4 +137,12 @@ function UpdateLightDirection() {
     light.directionLight.direction.x = x;
     light.directionLight.direction.y = y;
     light.directionLight.direction.z = z;
+}
+
+function UpdateCCWCullMode() {
+    device.enableCCWCull = !device.enableCCWCull;
+}
+
+function UpdateCWCullMode() {
+    device.enableCWCull = !device.enableCWCull;
 }

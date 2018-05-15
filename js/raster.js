@@ -8,6 +8,14 @@ Raster.prototype.SolidRaster = function (v1, v2, v3) {
     this.FixPosition2D(v2);
     this.FixPosition2D(v3);
 
+    if(device.enableCCWCull && this.ccwJudge(v1 , v2 , v3)){
+        return [];
+    }
+
+    if(device.enableCWCull && !this.ccwJudge(v1 , v2 , v3)){
+        return [];
+    }
+
     return this.RasterTriangle(v1, v2, v3);
 };
 
@@ -219,4 +227,16 @@ Raster.prototype.drawLine = function (v0, v1) {
             y0 += sy;
         }
     }
+};
+
+Raster.prototype.ccwJudge = function (v1 , v2 , v3) {
+    let d1 = v2.position.subtract(v1.position);
+    let d2 = v3.position.subtract(v1.position);
+    let d = Vector3.Cross(d1 , d2);
+
+    d.normalize();
+
+    let lhr = new Vector3(0 , 0 , 1);
+
+    return Vector3.Dot(d , lhr) > 0;
 };

@@ -76,8 +76,8 @@ Model.prototype.InitGroundPlane = function () {
         mesh.Vertices[i] = new Vertex(positions[i], texcoord, normal);
     }
 
-    mesh.Faces[0] = {A: 0, B: 1, C: 2};
-    mesh.Faces[1] = {A: 3, B: 4, C: 5};
+    mesh.Faces[0] = {A: 2, B: 1, C: 0};
+    mesh.Faces[1] = {A: 5, B: 4, C: 3};
 
     this.meshes = meshes;
 };

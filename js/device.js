@@ -1,4 +1,6 @@
 function Device(canvas) {
+    this.enableCCWCull = true;
+    this.enableCWCull = false;
     this.enableDepthTest = true;
     this.enableWireFrame = false;
     this.workingCanvas = canvas;
