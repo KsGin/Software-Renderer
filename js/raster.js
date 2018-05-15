@@ -31,7 +31,7 @@ Raster.prototype.WireFrameRaster = function (v1, v2, v3) {
 };
 
 Raster.prototype.FixPosition2D = function (vertex) {
-    vertex.position.x = -vertex.position.x * this.device.workingWidth + this.device.workingWidth / 2.0 >> 0;
+    vertex.position.x = vertex.position.x * this.device.workingWidth + this.device.workingWidth / 2.0 >> 0;
     vertex.position.y = -vertex.position.y * this.device.workingHeight + this.device.workingHeight / 2.0 >> 0;
 };
 
@@ -46,11 +46,6 @@ Raster.prototype.clamp = function (value, min, max) {
     return Math.max(min, Math.min(value, max));
 };
 
-// 过渡插值
-Raster.prototype.interpolate = function (val1, val2, gradient) {
-    return val1 + (val2 - val1) * this.clamp(gradient);
-};
-
 Raster.prototype.processScanLine = function (y, va, vb, vc, vd, res) {
 
     let pa = va.position;
@@ -61,84 +56,21 @@ Raster.prototype.processScanLine = function (y, va, vb, vc, vd, res) {
     let gradient1 = (pa.y !== pb.y) ? (y - pa.y) / (pb.y - pa.y) : 1;
     let gradient2 = (pc.y !== pd.y) ? (y - pc.y) / (pd.y - pc.y) : 1;
 
-    let sx = this.interpolate(pa.x, pb.x, gradient1) >> 0;
-    let ex = this.interpolate(pc.x, pd.x, gradient2) >> 0;
-
-    // 计算 开始Z值 和 结束Z值
-    let z1 = this.interpolate(pa.z, pb.z, gradient1);
-    let z2 = this.interpolate(pc.z, pd.z, gradient2);
-
-    let tua = Number(va.texcoord.x);
-    let tub = Number(vb.texcoord.x);
-    let tuc = Number(vc.texcoord.x);
-    let tud = Number(vd.texcoord.x);
-    let tva = Number(va.texcoord.y);
-    let tvb = Number(vb.texcoord.y);
-    let tvc = Number(vc.texcoord.y);
-    let tvd = Number(vd.texcoord.y);
-
-    let su = this.interpolate(tua, tub, gradient1);
-    let eu = this.interpolate(tuc, tud, gradient2);
-    let sv = this.interpolate(tva, tvb, gradient1);
-    let ev = this.interpolate(tvc, tvd, gradient2);
-
-    let nxa = Number(va.normal.x);
-    let nya = Number(va.normal.y);
-    let nza = Number(va.normal.z);
-    let nxb = Number(vb.normal.x);
-    let nyb = Number(vb.normal.y);
-    let nzb = Number(vb.normal.z);
-    let nxc = Number(vc.normal.x);
-    let nyc = Number(vc.normal.y);
-    let nzc = Number(vc.normal.z);
-    let nxd = Number(vd.normal.x);
-    let nyd = Number(vd.normal.y);
-    let nzd = Number(vd.normal.z);
-
-    let snx = this.interpolate(nxa, nxb, gradient1);
-    let enx = this.interpolate(nxc, nxd, gradient2);
-    let sny = this.interpolate(nya, nyb, gradient1);
-    let eny = this.interpolate(nyc, nyd, gradient2);
-    let snz = this.interpolate(nza, nzb, gradient1);
-    let enz = this.interpolate(nzc, nzd, gradient2);
+    let sv = this.interpolateVertex(va , vb , gradient1);
+    let ev = this.interpolateVertex(vc , vd , gradient2);
 
     // 限定 sx < ex
-    if (sx > ex) {
+    if (sv.position.x > ev.position.x) {
         let tmp;
-        tmp = sx;
-        sx = ex;
-        ex = tmp;
-        tmp = su;
-        su = eu;
-        eu = tmp;
         tmp = sv;
         sv = ev;
         ev = tmp;
-        tmp = snx;
-        snx = enx;
-        enx = tmp;
-        tmp = sny;
-        sny = eny;
-        eny = tmp;
-        tmp = snz;
-        snz = enz;
-        enz = tmp;
     }
 
-    for (let x = sx; x < ex; x++) {
-        let gradient = (x - sx) / (ex - sx);
-        let z = this.interpolate(z1, z2, gradient);
-        let u = this.interpolate(su, eu, gradient);
-        let v = this.interpolate(sv, ev, gradient);
-        let nx = this.interpolate(snx, enx, gradient);
-        let ny = this.interpolate(sny, eny, gradient);
-        let nz = this.interpolate(snz, enz, gradient);
-
-        res.push({
-            position: new Vector3(x, y, z),
-            texcoord: new Vector2(u, v),
-            normal: new Vector3(nx, ny, nz)
-        });
+    for (let x = sv.position.x; x < ev.position.x; x++) {
+        let gradient = (x - sv.position.x) / (ev.position.x - sv.position.x);
+        let v = this.interpolateVertex(sv , ev , gradient);
+        res.push(v);
     }
 };
 
@@ -232,11 +164,44 @@ Raster.prototype.drawLine = function (v0, v1) {
 Raster.prototype.ccwJudge = function (v1 , v2 , v3) {
     let d1 = v2.position.subtract(v1.position);
     let d2 = v3.position.subtract(v1.position);
+    d1.z = 0;
+    d2.z = 0;
+
     let d = Vector3.Cross(d1 , d2);
 
     d.normalize();
 
     let lhr = new Vector3(0 , 0 , 1);
 
-    return Vector3.Dot(d , lhr) > 0;
+    return Vector3.Dot(d , lhr) < 0;
+};
+
+
+// 过渡插值
+Raster.prototype.interpolate = function (val1, val2, gradient) {
+    return val1 + (val2 - val1) * this.clamp(gradient);
+};
+
+Raster.prototype.interpolateVertex = function(v1 , v2 , gradient){
+    let res = {};
+    res.position = this.interpolateVector3(v1.position , v2.position , gradient);
+    res.normal = this.interpolateVector3(v1.normal , v2.normal , gradient);
+    res.texcoord = this.interpolateVector2(v1.texcoord , v2.texcoord , gradient);
+    if(v1.worldPosition){
+        res.worldPosition = this.interpolateVector3(v1.worldPosition, v2.worldPosition, gradient);
+    }
+    return res;
+};
+
+Raster.prototype.interpolateVector3 = function(v1 , v2 , gradient){
+    let vx = this.interpolate(v1.x , v2.x , gradient);
+    let vy = this.interpolate(v1.y , v2.y , gradient);
+    let vz = this.interpolate(v1.z , v2.z , gradient);
+    return new Vector3(vx , vy , vz);
+};
+
+Raster.prototype.interpolateVector2 = function(v1 , v2 , gradient){
+    let vx = this.interpolate(v1.x , v2.x , gradient);
+    let vy = this.interpolate(v1.y , v2.y , gradient);
+    return new Vector2(vx , vy);
 };

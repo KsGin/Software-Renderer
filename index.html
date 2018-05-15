@@ -80,9 +80,17 @@
             <label>光照：</label>
             <div style="margin-left: 20px">
                 <label>平向光 : </label>
-                <input id="lightDirectionX" type="text" onchange="UpdateLightDirection()" style="width: 15%">
-                <input id="lightDirectionY" type="text" onchange="UpdateLightDirection()" style="width: 15%">
-                <input id="lightDirectionZ" type="text" onchange="UpdateLightDirection()" style="width: 15%">
+                <input id="directionLight" type="checkbox" onchange="UpdateLightMode()">
+                <input id="lightDirectionX" type="text" onchange="UpdateLightDirection()" style="width: 10%">
+                <input id="lightDirectionY" type="text" onchange="UpdateLightDirection()" style="width: 10%">
+                <input id="lightDirectionZ" type="text" onchange="UpdateLightDirection()" style="width: 10%">
+            </div>
+            <div style="margin-left: 20px">
+                <label>点光源 : </label>
+                <input id="pointLight" type="checkbox" onchange="UpdateLightMode()">
+                <input id="lightPositionX" type="text" onchange="UpdateLightPosition()" style="width: 10%">
+                <input id="lightPositionY" type="text" onchange="UpdateLightPosition()" style="width: 10%">
+                <input id="lightPositionZ" type="text" onchange="UpdateLightPosition()" style="width: 10%">
             </div>
         </div>
     </div>

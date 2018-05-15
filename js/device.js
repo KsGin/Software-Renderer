@@ -1,4 +1,6 @@
 function Device(canvas) {
+    this.directionLight = true;
+    this.pointLight = false;
     this.enableCCWCull = true;
     this.enableCWCull = false;
     this.enableDepthTest = true;
@@ -43,7 +45,15 @@ Device.prototype.drawPoint = function (point, color) {
     }
 };
 
-Device.prototype.render = function (model, worldMatrix, viewMatrix, projectionMatrix, texture, light) {
+Device.prototype.render = function(model, worldMatrix, viewMatrix, projectionMatrix, texture, light){
+    if (this.directionLight){
+        this.renderDirectionLightShader(model, worldMatrix, viewMatrix, projectionMatrix, texture, light);
+    } else {
+        this.renderPointLightShader(model, worldMatrix, viewMatrix, projectionMatrix, texture, light);
+    }
+};
+
+Device.prototype.renderDirectionLightShader = function (model, worldMatrix, viewMatrix, projectionMatrix, texture, light) {
 
     let shader = new ShaderDevice(this);
     let raster = new Raster(this);
@@ -67,3 +77,29 @@ Device.prototype.render = function (model, worldMatrix, viewMatrix, projectionMa
         });
     });
 };
+
+Device.prototype.renderPointLightShader = function (model, worldMatrix, viewMatrix, projectionMatrix, texture, light) {
+
+    let shader = new ShaderDevice(this);
+    let raster = new Raster(this);
+
+    model.meshes.forEach(mesh => {
+        mesh.Faces.forEach(face => {
+
+            let v1 = shader.PointLightShader_VS(mesh.Vertices[face.A] , worldMatrix , viewMatrix , projectionMatrix);
+            let v2 = shader.PointLightShader_VS(mesh.Vertices[face.B] , worldMatrix , viewMatrix , projectionMatrix);
+            let v3 = shader.PointLightShader_VS(mesh.Vertices[face.C] , worldMatrix , viewMatrix , projectionMatrix);
+
+            if (this.enableWireFrame) {
+                raster.WireFrameRaster(v1 , v2 , v3);
+            } else {
+                let res = raster.SolidRaster(v1 , v2 , v3);
+                res.forEach(v => {
+                    let color = shader.PointLightShader_PS(v , texture , light);
+                    this.drawPoint(v.position , color);
+                });
+            }
+        });
+    });
+};
+

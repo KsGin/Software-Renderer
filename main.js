@@ -39,18 +39,24 @@ window.onload = function () {
 
     document.getElementById("depthTestMode").checked = true;
     document.getElementById("ccwCullMode").checked = true;
-    document.getElementById("lightDirectionX").value = 10;
-    document.getElementById("lightDirectionY").value = 10;
-    document.getElementById("lightDirectionZ").value = 10;
+    document.getElementById("directionLight").checked = true;
+    document.getElementById("pointLight").checked = false;
+    document.getElementById("lightDirectionX").value = 0;
+    document.getElementById("lightDirectionY").value = -1;
+    document.getElementById("lightDirectionZ").value = 1;
+    document.getElementById("lightPositionX").value = 0;
+    document.getElementById("lightPositionY").value = 1;
+    document.getElementById("lightPositionZ").value = 0;
 
     light = new Light();
-    light.directionLight = new DirectionLight(10, 10, 10);
+    light.directionLight = new DirectionLight(0, -1, 1);
+    light.pointLight = new PointLight(0 , 1 , 0);
 };
 
 function StartConfigRender() {
 
     camera = new Camera();
-    camera.Position = new Vector3(0, 3, 3);
+    camera.Position = new Vector3(0, 3, -3);
     camera.Target = new Vector3(0, 0, 0);
 
     let cubeModel = new Model();
@@ -85,9 +91,9 @@ function Render() {
     }
 
     device.clearColorAndDepth();
-
+    //
     // world = worldMatrix.multiply(Matrix.Translation(0 , 0 , 0));
-    // device.render(models[1], world, viewMatrix, projectionMatrix, textures[2], light);
+    // device.render(models[1], world, viewMatrix, projectionMatrix, textures[0], light);
 
     world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
         .multiply(Matrix.Translation(1, 1, 0))
@@ -139,10 +145,27 @@ function UpdateLightDirection() {
     light.directionLight.direction.z = z;
 }
 
+function UpdateLightPosition() {
+    let x, y, z;
+    x = Number(document.getElementById("lightPositionX").value);
+    y = Number(document.getElementById("lightPositionY").value);
+    z = Number(document.getElementById("lightPositionZ").value);
+    light.pointLight.position.x = x;
+    light.pointLight.position.y = y;
+    light.pointLight.position.z = z;
+}
+
 function UpdateCCWCullMode() {
     device.enableCCWCull = !device.enableCCWCull;
 }
 
 function UpdateCWCullMode() {
     device.enableCWCull = !device.enableCWCull;
+}
+
+function UpdateLightMode() {
+    device.directionLight = !device.directionLight;
+    device.pointLight = !device.pointLight;
+    document.getElementById("directionLight").checked = device.directionLight;
+    document.getElementById("pointLight").checked = device.pointLight;
 }
