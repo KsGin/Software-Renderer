@@ -1,3 +1,5 @@
+let count = 0;
+
 window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -41,23 +43,30 @@ window.onload = function () {
     document.getElementById("ccwCullMode").checked = true;
     document.getElementById("directionLight").checked = true;
     document.getElementById("pointLight").checked = false;
-    document.getElementById("lightDirectionX").value = 0;
-    document.getElementById("lightDirectionY").value = -1;
-    document.getElementById("lightDirectionZ").value = 1;
-    document.getElementById("lightPositionX").value = 0;
-    document.getElementById("lightPositionY").value = 1;
+    document.getElementById("shadow").checked = false;
+    document.getElementById("lightDirectionX").value = 5;
+    document.getElementById("lightDirectionY").value = -5;
+    document.getElementById("lightDirectionZ").value = 0;
+    document.getElementById("lightPositionX").value = -5;
+    document.getElementById("lightPositionY").value = 0;
     document.getElementById("lightPositionZ").value = 0;
+    document.getElementById("cameraLocationX").value = 0;
+    document.getElementById("cameraLocationY").value = 3;
+    document.getElementById("cameraLocationZ").value = -3;
+    document.getElementById("cameraLookAtX").value = 0;
+    document.getElementById("cameraLookAtY").value = 0;
+    document.getElementById("cameraLookAtZ").value = 0;
 
     light = new Light();
-    light.directionLight = new DirectionLight(0, -1, 1);
-    light.pointLight = new PointLight(0 , 1 , 0);
-};
-
-function StartConfigRender() {
+    light.directionLight = new DirectionLight(5, -5, 0);
+    light.pointLight = new PointLight(-5, 0, 0);
 
     camera = new Camera();
     camera.Position = new Vector3(0, 3, -3);
     camera.Target = new Vector3(0, 0, 0);
+};
+
+function StartConfigRender() {
 
     let cubeModel = new Model();
     cubeModel.InitCube();
@@ -73,15 +82,12 @@ function StartConfigRender() {
     let cudeTexture1 = new Texture("asserts/tex1.png", 256, 256);
     textures.push(cudeTexture1);
 
-    let cudeTexture2 = new Texture("asserts/tex2.png", 256, 256);
+    let cudeTexture2 = new Texture("asserts/tex2.png", 308, 308);
     textures.push(cudeTexture2);
-
-    // let texture = new Texture(null , 1000 , 800);
-    // textures.push(texture);
 
     worldMatrix = Matrix.Identity().multiply(Matrix.Scaling(0.5, 0.5, 0.5));
     viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
-    projectionMatrix = Matrix.PerspectiveFovLH(0.78, canvas.width / canvas.height, 0.01, 10.0);
+    projectionMatrix = Matrix.PerspectiveFovLH(1, canvas.width / canvas.height, 0.01, 1000.0);
 
     requestAnimationFrame(Render);
 }
@@ -97,27 +103,56 @@ function Render() {
 
     device.clearColorAndDepth();
 
-    // device.setRenderTarget(textures[2]);
-    //
-    // world = worldMatrix.multiply(Matrix.Translation(0 , 0 , 0));
-    // device.render(models[1], world, viewMatrix, projectionMatrix, textures[0], light);
+    if (device.shadow) {
 
-    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
-        .multiply(Matrix.Translation(1, 1, 0))
-        .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
-    device.render(models[0], world, viewMatrix, projectionMatrix, textures[1], light);
+        let depthMap = new Texture(null, device.workingWidth, device.workingHeight);
+        let ld = light.directionLight.direction;
+        let lightPosition = new Vector3(-ld.x, -ld.y, -ld.z);
+        let lightViewMatrix = Matrix.LookAtLH(lightPosition, new Vector3(0, 0, 0), Vector3.Up());
 
-    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
-        .multiply(Matrix.Translation(-1, 1, 0))
-        .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
-    device.render(models[0], world, viewMatrix, projectionMatrix, textures[0], light);
+        device.setRenderTarget(depthMap);
 
-    // device.resetRenderTarget();
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
+            .multiply(Matrix.Translation(1, 1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.RenderDepthMap(models[0], world, lightViewMatrix, projectionMatrix);
 
-    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, 0, rolation))
-        .multiply(Matrix.Translation(0, -1, 0))
-        .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
-    device.render(models[0] , world , viewMatrix , projectionMatrix , textures[2] , light);
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
+            .multiply(Matrix.Translation(-1, 1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.RenderDepthMap(models[0], world, lightViewMatrix, projectionMatrix);
+
+        world = worldMatrix.multiply(Matrix.Scaling(1, 1, 1));
+        device.RenderDepthMap(models[1], world, lightViewMatrix, projectionMatrix);
+
+        device.resetRenderTarget();
+
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
+            .multiply(Matrix.Translation(1, 1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.renderShadow(models[0], world, viewMatrix, projectionMatrix, textures[1], depthMap, lightViewMatrix, projectionMatrix, light);
+
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
+            .multiply(Matrix.Translation(-1, 1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.renderShadow(models[0], world, viewMatrix, projectionMatrix, textures[0], depthMap, lightViewMatrix, projectionMatrix, light);
+
+        world = worldMatrix.multiply(Matrix.Scaling(1, 1, 1));
+        device.renderShadow(models[1], world, viewMatrix, projectionMatrix, textures[2], depthMap, lightViewMatrix, projectionMatrix, light);
+    } else {
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
+            .multiply(Matrix.Translation(1, 1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.render(models[0], world, viewMatrix, projectionMatrix, textures[1], light);
+
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
+            .multiply(Matrix.Translation(-1, 1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.render(models[0], world, viewMatrix, projectionMatrix, textures[0], light);
+
+        world = worldMatrix.multiply(Matrix.Scaling(1, 1, 1));
+        device.render(models[1], world, viewMatrix, projectionMatrix, textures[2], light);
+    }
 
     device.present();
 
@@ -169,6 +204,28 @@ function UpdateLightPosition() {
     light.pointLight.position.z = z;
 }
 
+function UpdateCameraLocation() {
+    let x, y, z;
+    x = Number(document.getElementById("cameraLocationX").value);
+    y = Number(document.getElementById("cameraLocationY").value);
+    z = Number(document.getElementById("cameraLocationZ").value);
+    camera.Position.x = x;
+    camera.Position.y = y;
+    camera.Position.z = z;
+    viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
+}
+
+function UpdateCameraLookAt() {
+    let x, y, z;
+    x = Number(document.getElementById("cameraLookAtX").value);
+    y = Number(document.getElementById("cameraLookAtY").value);
+    z = Number(document.getElementById("cameraLookAtZ").value);
+    camera.Target.x = x;
+    camera.Target.y = y;
+    camera.Target.z = z;
+    viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
+}
+
 function UpdateCCWCullMode() {
     device.enableCCWCull = !device.enableCCWCull;
 }
@@ -183,3 +240,8 @@ function UpdateLightMode() {
     document.getElementById("directionLight").checked = device.directionLight;
     document.getElementById("pointLight").checked = device.pointLight;
 }
+
+function UpdateShadowMode() {
+    device.shadow = !device.shadow;
+}
+

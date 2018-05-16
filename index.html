@@ -68,12 +68,31 @@
             <input id="depthTestMode" type="checkbox" onchange="UpdateDepthTestMode()">
         </div>
         <div>
+            <label>阴影遮罩：</label>
+            <input id="shadow" type="checkbox" onchange="UpdateShadowMode()">
+        </div>
+        <div>
             <label>背面剔除：</label>
             <div style="margin-left: 20px">
                 <label>CCW : </label>
                 <input id="ccwCullMode" type="checkbox" onchange="UpdateCCWCullMode()">
                 <label>CW : </label>
                 <input id="cwCullMode" type="checkbox" onchange="UpdateCWCullMode()">
+            </div>
+        </div>
+        <div>
+            <label>摄像机：</label>
+            <div style="margin-left: 20px">
+                <label>位置：</label>
+                <input id="cameraLocationX" type="text" onchange="UpdateCameraLocation()" style="width: 10%">
+                <input id="cameraLocationY" type="text" onchange="UpdateCameraLocation()" style="width: 10%">
+                <input id="cameraLocationZ" type="text" onchange="UpdateCameraLocation()" style="width: 10%">
+            </div>
+            <div style="margin-left: 20px">
+                <label>目标：</label>
+                <input id="cameraLookAtX" type="text" onchange="UpdateCameraLookAt()" style="width: 10%">
+                <input id="cameraLookAtY" type="text" onchange="UpdateCameraLookAt()" style="width: 10%">
+                <input id="cameraLookAtZ" type="text" onchange="UpdateCameraLookAt()" style="width: 10%">
             </div>
         </div>
         <div>
@@ -95,6 +114,7 @@
                 <input id="lightPositionZ" type="text" onchange="UpdateLightPosition()" style="width: 10%">
             </div>
         </div>
+
     </div>
 </div>
 <div class="right" id="canvasBox">

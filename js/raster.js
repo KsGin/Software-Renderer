@@ -35,17 +35,6 @@ Raster.prototype.FixPosition2D = function (vertex) {
     vertex.position.y = -vertex.position.y * this.device.workingHeight + this.device.workingHeight / 2.0 >> 0;
 };
 
-// 限制数值范围在0和1之间
-Raster.prototype.clamp = function (value, min, max) {
-    if (typeof min === "undefined") {
-        min = 0;
-    }
-    if (typeof max === "undefined") {
-        max = 1;
-    }
-    return Math.max(min, Math.min(value, max));
-};
-
 Raster.prototype.processScanLine = function (y, va, vb, vc, vd, res) {
 
     let pa = va.position;
@@ -179,17 +168,30 @@ Raster.prototype.ccwJudge = function (v1 , v2 , v3) {
 
 // 过渡插值
 Raster.prototype.interpolate = function (val1, val2, gradient) {
-    return val1 + (val2 - val1) * this.clamp(gradient);
+    if (val1 > val2){
+        return val1 - (val1 - val2) * device.clamp(gradient);
+    }
+    return val1 + (val2 - val1) * device.clamp(gradient);
 };
 
 Raster.prototype.interpolateVertex = function(v1 , v2 , gradient){
     let res = {};
-    res.position = this.interpolateVector3(v1.position , v2.position , gradient);
-    res.normal = this.interpolateVector3(v1.normal , v2.normal , gradient);
-    res.texcoord = this.interpolateVector2(v1.texcoord , v2.texcoord , gradient);
+    if(v1.position){
+        res.position = this.interpolateVector3(v1.position , v2.position , gradient);
+    }
+    if(v1.normal){
+        res.normal = this.interpolateVector3(v1.normal , v2.normal , gradient);
+    }
+    if(v1.texcoord){
+        res.texcoord = this.interpolateVector2(v1.texcoord , v2.texcoord , gradient);
+    }
     if(v1.worldPosition){
         res.worldPosition = this.interpolateVector3(v1.worldPosition, v2.worldPosition, gradient);
     }
+    if (v1.lightViewPosition){
+        res.lightViewPosition = this.interpolateVector3(v1.lightViewPosition , v2.lightViewPosition , gradient);
+    }
+
     return res;
 };
 
