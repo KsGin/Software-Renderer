@@ -16,7 +16,7 @@ function Device(canvas) {
 Device.prototype.clearColorAndDepth = function () {
     this.workingContext.clearRect( 0 , 0 , this.workingWidth , this.workingHeight);
     this.backbuffer = this.workingContext.getImageData(0, 0, this.workingWidth, this.workingHeight);
-    this.depthBuffer.fill(1000, 0, this.workingWidth * this.workingHeight);
+    this.depthBuffer.fill(10000, 0, this.workingWidth * this.workingHeight);
 };
 
 Device.prototype.present = function () {
@@ -69,7 +69,6 @@ Device.prototype.renderShadow = function(model, worldMatrix, viewMatrix, project
         this.renderPointLightShadowShader(model, worldMatrix, viewMatrix, projectionMatrix, texture ,depthMap , light);
     }
 };
-
 
 
 Device.prototype.RenderDepthMap = function(model, worldMatrix, viewMatrix, projectionMatrix){
