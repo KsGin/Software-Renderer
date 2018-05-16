@@ -22,6 +22,14 @@ Device.prototype.present = function () {
     this.workingContext.putImageData(this.backbuffer, 0, 0);
 };
 
+Device.prototype.setRenderTarget = function (texture){
+    this.backbuffer = texture.internalBuffer;
+};
+
+Device.prototype.resetRenderTarget = function (){
+    this.backbuffer = this.workingContext.getImageData(0, 0, this.workingWidth, this.workingHeight);
+};
+
 Device.prototype.drawPoint = function (point, color) {
     if (point.x >= 0 && point.y >= 0 && point.x < this.workingWidth && point.y < this.workingHeight) {
         let x = point.x;
@@ -102,4 +110,6 @@ Device.prototype.renderPointLightShader = function (model, worldMatrix, viewMatr
         });
     });
 };
+
+
 

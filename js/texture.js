@@ -1,7 +1,11 @@
 function Texture(filename , width , height) {
     this.width = width;
     this.height = height;
-    this.LoadTexture(filename);
+    this.internalBuffer = null;
+    if(filename)
+        this.LoadTexture(filename);
+    else
+        this.InitTexture();
 }
 
 Texture.prototype.LoadTexture = function(filename){
@@ -19,6 +23,21 @@ Texture.prototype.LoadTexture = function(filename){
         _this.internalBuffer = internalContext.getImageData(0, 0, _this.width, _this.height);
     };
     imageTexture.src = filename;
+};
+
+Texture.prototype.InitTexture = function(){
+    let imageTexture = new Image();
+    imageTexture.crossOrigin = "Anonymous";
+    imageTexture.height = this.height;
+    imageTexture.width = this.width;
+
+    let internalCanvas = document.createElement("canvas");
+    internalCanvas.width = this.width;
+    internalCanvas.height = this.height;
+    let internalContext = internalCanvas.getContext("2d");
+    internalContext.drawImage(imageTexture, 0, 0);
+
+    this.internalBuffer = internalContext.getImageData(0, 0, this.width, this.height);
 };
 
 

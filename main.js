@@ -70,9 +70,14 @@ function StartConfigRender() {
     let cubeTexture = new Texture("asserts/tex.png", 674, 706);
     textures.push(cubeTexture);
 
-    let planeTexture = new Texture("asserts/tex1.png", 256, 256);
-    textures.push(planeTexture);
+    let cudeTexture1 = new Texture("asserts/tex1.png", 256, 256);
+    textures.push(cudeTexture1);
 
+    let cudeTexture2 = new Texture("asserts/tex2.png", 256, 256);
+    textures.push(cudeTexture2);
+
+    // let texture = new Texture(null , 1000 , 800);
+    // textures.push(texture);
 
     worldMatrix = Matrix.Identity().multiply(Matrix.Scaling(0.5, 0.5, 0.5));
     viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
@@ -91,6 +96,8 @@ function Render() {
     }
 
     device.clearColorAndDepth();
+
+    // device.setRenderTarget(textures[2]);
     //
     // world = worldMatrix.multiply(Matrix.Translation(0 , 0 , 0));
     // device.render(models[1], world, viewMatrix, projectionMatrix, textures[0], light);
@@ -100,10 +107,17 @@ function Render() {
         .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
     device.render(models[0], world, viewMatrix, projectionMatrix, textures[1], light);
 
-    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(-rolation, -rolation, 0))
+    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
         .multiply(Matrix.Translation(-1, 1, 0))
         .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
     device.render(models[0], world, viewMatrix, projectionMatrix, textures[0], light);
+
+    // device.resetRenderTarget();
+
+    world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, 0, rolation))
+        .multiply(Matrix.Translation(0, -1, 0))
+        .multiply(Matrix.Scaling(0.2 , 0.2 , 0.2));
+    device.render(models[0] , world , viewMatrix , projectionMatrix , textures[2] , light);
 
     device.present();
 
