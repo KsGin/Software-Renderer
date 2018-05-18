@@ -79,21 +79,18 @@ ShaderDevice.prototype.DirectionLightShadowShader_PS = function (psInput, textur
         textureColor = new Color4(1, 1, 1, 1);
     }
 
-    let bias = 0.01;
+    let bias = 0.001;
     let tu = psInput.lightViewPosition.x / 2.0 + 0.5;
     let tv = -psInput.lightViewPosition.y / 2.0 + 0.5;
 
     let ambient = 0.1;
     let diffuseIntensity = 0;
+    let mapZ = depthMap.TextureMapClamp(tu, tv).r;
 
-    if (device.clamp(tu) === tu && device.clamp(tv) === tv) {
-        let mapZ = depthMap.TextureMapClamp(tu, tv).r;
-
-        if (psInput.lightViewPosition.z - bias < mapZ) {
-            diffuseIntensity = device.clamp(Vector3.Dot(normal, lightf));
-        } else {
-            diffuseIntensity = 0;
-        }
+    if (psInput.lightViewPosition.z - bias < mapZ) {
+        diffuseIntensity = device.clamp(Vector3.Dot(normal, lightf));
+    } else {
+        diffuseIntensity = 0;
     }
 
     textureColor = textureColor.multiply(diffuseIntensity + ambient);
@@ -150,6 +147,8 @@ ShaderDevice.prototype.RenderDepthMap_VS = function (vsInput, worldMatrix, viewM
     let transformMatrix = worldMatrix.multiply(viewMatrix).multiply(projectionMatrix);
 
     let position = Vector3.TransformCoordinates(vsInput.position, transformMatrix);
+
+    console.log(position.z);
 
     return ({
         position: position,

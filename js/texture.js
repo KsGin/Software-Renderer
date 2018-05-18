@@ -63,8 +63,12 @@ Texture.prototype.TextureMap = function(tu , tv){
 Texture.prototype.TextureMapClamp = function(tu , tv){
 
     if (this.internalBuffer) {
-        let u = Math.abs(tu * this.width) >> 0;
-        let v = Math.abs(tv * this.height) >> 0;
+
+        tu = Math.max(0 , Math.min(tu , 1));
+        tv = Math.max(0 , Math.min(tv , 1));
+
+        let u = tu * this.width >> 0;
+        let v = tv * this.height >> 0;
 
         let pos = (u + v * this.width) * 4;
 

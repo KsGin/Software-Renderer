@@ -87,7 +87,7 @@ function StartConfigRender() {
 
     worldMatrix = Matrix.Identity().multiply(Matrix.Scaling(0.5, 0.5, 0.5));
     viewMatrix = Matrix.LookAtLH(camera.Position, camera.Target, Vector3.Up());
-    projectionMatrix = Matrix.PerspectiveFovLH(1, canvas.width / canvas.height, 0.01, 1000.0);
+    projectionMatrix = Matrix.PerspectiveFovLH(0.8, canvas.width / canvas.height, 0.01, 1000.0);
 
     requestAnimationFrame(Render);
 }
@@ -122,8 +122,10 @@ function Render() {
             .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
         device.RenderDepthMap(models[0], world, lightViewMatrix, projectionMatrix);
 
-        world = worldMatrix.multiply(Matrix.Scaling(1, 1, 1));
-        device.RenderDepthMap(models[1], world, lightViewMatrix, projectionMatrix);
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
+            .multiply(Matrix.Translation(0, -1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.RenderDepthMap(models[0], world, viewMatrix, projectionMatrix);
 
         device.resetRenderTarget();
 
@@ -137,8 +139,11 @@ function Render() {
             .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
         device.renderShadow(models[0], world, viewMatrix, projectionMatrix, textures[0], depthMap, lightViewMatrix, projectionMatrix, light);
 
-        world = worldMatrix.multiply(Matrix.Scaling(1, 1, 1));
-        device.renderShadow(models[1], world, viewMatrix, projectionMatrix, textures[2], depthMap, lightViewMatrix, projectionMatrix, light);
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
+            .multiply(Matrix.Translation(0, -1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.renderShadow(models[0], world, viewMatrix, projectionMatrix, textures[2], depthMap, lightViewMatrix, projectionMatrix, light);
+
     } else {
         world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(rolation, rolation, 0))
             .multiply(Matrix.Translation(1, 1, 0))
@@ -150,8 +155,10 @@ function Render() {
             .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
         device.render(models[0], world, viewMatrix, projectionMatrix, textures[0], light);
 
-        world = worldMatrix.multiply(Matrix.Scaling(1, 1, 1));
-        device.render(models[1], world, viewMatrix, projectionMatrix, textures[2], light);
+        world = worldMatrix.multiply(Matrix.RotationYawPitchRoll(0, rolation, rolation))
+            .multiply(Matrix.Translation(0, -1, 0))
+            .multiply(Matrix.Scaling(0.2, 0.2, 0.2));
+        device.render(models[0], world, viewMatrix, projectionMatrix, textures[2], light);
     }
 
     device.present();
