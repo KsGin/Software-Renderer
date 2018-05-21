@@ -20,7 +20,7 @@
 
 + 线框模式渲染
 + 纹理模式渲染
-+ 二次渲染：render to texture & 
++ 二次渲染：render to texture
 + 背面剔除：cw + ccw
 + 基础光照：ambient + diffuse 
 + 尽可能模拟现代 GPU 图形渲染管道
