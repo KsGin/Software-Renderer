@@ -3,7 +3,6 @@ function Device(canvas) {
     this.pointLight = false;
     this.enableCCWCull = true;
     this.enableCWCull = false;
-    this.shadow = false;
     this.enableDepthTest = true;
     this.enableWireFrame = false;
     this.workingCanvas = canvas;
@@ -62,39 +61,6 @@ Device.prototype.render = function(model, worldMatrix, viewMatrix, projectionMat
     }
 };
 
-Device.prototype.renderShadow = function(model, worldMatrix, viewMatrix, projectionMatrix, texture, depthMap , lightViewMatrix , lightProjectionMatrix , light){
-    if (this.directionLight){
-        this.renderDirectionShadowShader(model, worldMatrix, viewMatrix, projectionMatrix, texture ,depthMap, lightViewMatrix , lightProjectionMatrix , light);
-    } else {
-        this.renderPointLightShadowShader(model, worldMatrix, viewMatrix, projectionMatrix, texture ,depthMap , light);
-    }
-};
-
-
-Device.prototype.RenderDepthMap = function(model, worldMatrix, viewMatrix, projectionMatrix){
-    let shader = new ShaderDevice(this);
-    let raster = new Raster(this);
-
-    model.meshes.forEach(mesh => {
-        mesh.Faces.forEach(face => {
-
-            let v1 = shader.RenderDepthMap_VS(mesh.Vertices[face.A] , worldMatrix , viewMatrix , projectionMatrix);
-            let v2 = shader.RenderDepthMap_VS(mesh.Vertices[face.B] , worldMatrix , viewMatrix , projectionMatrix);
-            let v3 = shader.RenderDepthMap_VS(mesh.Vertices[face.C] , worldMatrix , viewMatrix , projectionMatrix);
-
-            if (this.enableWireFrame) {
-                raster.WireFrameRaster(v1 , v2 , v3);
-            } else {
-                let res = raster.SolidRaster(v1 , v2 , v3);
-                res.forEach(v => {
-                    let color = shader.RenderDepthMap_PS(v);
-                    this.drawPoint(v.position , color);
-                });
-            }
-        });
-    });
-};
-
 Device.prototype.renderDirectionLightShader = function (model, worldMatrix, viewMatrix, projectionMatrix, texture, light) {
 
     let shader = new ShaderDevice(this);
@@ -144,33 +110,6 @@ Device.prototype.renderPointLightShader = function (model, worldMatrix, viewMatr
         });
     });
 };
-
-
-Device.prototype.renderDirectionShadowShader = function (model, worldMatrix, viewMatrix, projectionMatrix, texture, depthMap , lightViewMatrix , lightProjectionMatrix , light) {
-
-    let shader = new ShaderDevice(this);
-    let raster = new Raster(this);
-
-    model.meshes.forEach(mesh => {
-        mesh.Faces.forEach(face => {
-
-            let v1 = shader.DirectionLightShadowShader_VS(mesh.Vertices[face.A] , worldMatrix , viewMatrix , projectionMatrix, lightViewMatrix , lightProjectionMatrix , light);
-            let v2 = shader.DirectionLightShadowShader_VS(mesh.Vertices[face.B] , worldMatrix , viewMatrix , projectionMatrix, lightViewMatrix , lightProjectionMatrix , light);
-            let v3 = shader.DirectionLightShadowShader_VS(mesh.Vertices[face.C] , worldMatrix , viewMatrix , projectionMatrix, lightViewMatrix , lightProjectionMatrix , light);
-
-            if (this.enableWireFrame) {
-                raster.WireFrameRaster(v1 , v2 , v3);
-            } else {
-                let res = raster.SolidRaster(v1 , v2 , v3);
-                res.forEach(v => {
-                    let color = shader.DirectionLightShadowShader_PS(v , texture , depthMap , light);
-                    this.drawPoint(v.position , color);
-                });
-            }
-        });
-    });
-};
-
 
 // 限制数值范围在0和1之间
 Device.prototype.clamp = function (value, min, max) {
