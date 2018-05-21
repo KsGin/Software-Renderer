@@ -148,8 +148,6 @@ ShaderDevice.prototype.RenderDepthMap_VS = function (vsInput, worldMatrix, viewM
 
     let position = Vector3.TransformCoordinates(vsInput.position, transformMatrix);
 
-    console.log(position.z);
-
     return ({
         position: position,
     });
