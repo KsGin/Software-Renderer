@@ -8,15 +8,13 @@
 
 1. 线框渲染
 
-   ![image-20180521192811947](https://image.ibb.co/dc6jo8/image.png)
+   ![image-20180521192811947](https://github.com/KsGin/Software-Renderer/blob/master/screenshots/r1.png?raw=true)
 
-2. 开启深度测试，背面剔除，平行光的渲染结果![image-20180521192611977](/var/folders/dx/b6543rgn7fz96d8ly9_2xxkw0000gn/T/abnerworks.Typora/image-20180521193526020.png)
+2. 开启深度测试，背面剔除，平行光的渲染结果![image-20180521192611977](https://github.com/KsGin/Software-Renderer/blob/master/screenshots/r2.png?raw=true)
 
 3. 开启深度测试，背面剔除，点光源的渲染结果
 
-   ![image-20180521192953149](/var/folders/dx/b6543rgn7fz96d8ly9_2xxkw0000gn/T/abnerworks.Typora/image-20180521192953149.png)
-
-
+   ![image-20180521192953149](https://github.com/KsGin/Software-Renderer/blob/master/screenshots/r3.png?raw=true)
 
 已实现：
 
