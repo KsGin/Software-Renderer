@@ -21,8 +21,7 @@ ShaderDevice.prototype.DirectionLightShader_VS = function (vsInput, worldMatrix,
 ShaderDevice.prototype.DirectionLightShader_PS = function (psInput, texture, light) {
 
     let normal = psInput.normal;
-    let lightd = light.directionLight.direction;
-    let lightf = new Vector3(-lightd.x, -lightd.y, -lightd.z);
+    let lightf = light.directionLight.direction.negate();
 
     normal.normalize();
     lightf.normalize();
