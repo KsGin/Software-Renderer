@@ -46,7 +46,7 @@ window.onload = function () {
     document.getElementById("lightDirectionX").value = 5;
     document.getElementById("lightDirectionY").value = -5;
     document.getElementById("lightDirectionZ").value = 0;
-    document.getElementById("lightPositionX").value = -5;
+    document.getElementById("lightPositionX").value = 0;
     document.getElementById("lightPositionY").value = 0;
     document.getElementById("lightPositionZ").value = 0;
     document.getElementById("cameraLocationX").value = 0;
@@ -58,7 +58,7 @@ window.onload = function () {
 
     light = new Light();
     light.directionLight = new DirectionLight(5, -5, 0);
-    light.pointLight = new PointLight(-5, 0, 0);
+    light.pointLight = new PointLight(0, 0, 0);
 
     camera = new Camera();
     camera.Position = new Vector3(0, 3, -3);
